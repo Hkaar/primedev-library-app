@@ -7,6 +7,9 @@ import userRouter from "./routes/users.js";
 const app = express();
 const port = process.env.PORT || 3000;
 
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
 app.use("/", authRouter);
 app.use("/books", bookRouter);
 app.use("/users", userRouter);
