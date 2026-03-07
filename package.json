@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon ./src/index.js localhost"
+    "dev": "nodemon ./src/index.js localhost"
   },
   "author": "hkaar",
   "license": "MIT",
