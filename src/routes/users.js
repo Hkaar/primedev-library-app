@@ -1,98 +1,90 @@
 import { Router } from "express";
 
+import prisma from "../../lib/database.js";
+import { hashPassword } from "../../lib/hash.js";
+
 const router = Router();
 
-const db = [];
-
-/**
- * @param {Request} req
- * @param {Response} res
- */
-router.get("/", (req, res) => {
-  res.send(db);
+router.get("/", async (req, res) => {
+  const users = await prisma.users.findMany();
+  return res.json({
+    success: true,
+    message: "Successfully fetched all users!",
+    data: users,
+  });
 });
 
-/**
- * @param {Request} req
- * @param {Response} res
- */
-router.get("/:id", (req, res) => {
+router.get("/:id", async (req, res) => {
   const id = parseInt(req.params.id);
-
-  const user = db.find((user) => user.id === id);
+  const user = await prisma.users.findUnique({ where: { id } });
 
   if (!user) {
-    res.send(`User with ID: ${id} not found`);
+    return res.status(404).json({ msg: `User with ID: ${id} not found` });
   }
 
-  res.send(user);
-});
-
-/**
- * @param {Request} req
- * @param {Response} res
- */
-router.post("/", (req, res) => {
-  const { username, email, password } = req.body;
-
-  const id = db.length + 1;
-
-  db.push({
-    id: id,
-    username: username,
-    email: email,
-    password: password,
-  });
-
-  res.json({
-    msg: "Successfully created user!",
-    id: id,
+  return res.json({
+    success: true,
+    message: `Successfully fetched user with id ${id}!`,
+    data: user,
   });
 });
 
-/**
- * @param {Request} req
- * @param {Response} res
- */
-router.put("/:id", (req, res) => {
-  const id = parseInt(req.params.id);
+router.post("/", async (req, res) => {
+  const { name, email, password, role } = req.body;
 
-  const { username, email, password } = req.body;
+  const hashed = await hashPassword(password);
 
-  const userIndex = db.findIndex((user) => user.id === id);
+  const user = await prisma.users.create({
+    data: { name, email, password: hashed, role },
+  });
 
-  if (userIndex === -1) {
-    res.send(`User with ID: ${id} not found`);
-    return;
-  }
-
-  db[userIndex] = {
-    id: db[userIndex].id,
-    username,
-    email,
-    password,
-  };
-
-  res.send(`User with ID: ${id} updated successfully`);
+  return res.json({
+    success: true,
+    message: "Successfully created user!",
+    data: user,
+  });
 });
 
-/**
- * @param {Request} req
- * @param {Response} res
- */
-router.delete("/:id", (req, res) => {
+router.put("/:id", async (req, res) => {
   const id = parseInt(req.params.id);
+  const { name, email, password, role } = req.body;
 
-  const userIndex = db.findIndex((user) => user.id === id);
-
-  if (userIndex === -1) {
-    res.send(`User with ID: ${id} not found`);
-    return;
+  const existing = await prisma.users.findUnique({ where: { id } });
+  if (!existing) {
+    return res.status(404).json({ msg: `User with ID: ${id} not found` });
   }
 
-  db.splice(userIndex, 1);
+  const hashed = await hashPassword(password);
 
-  res.send(`User with ID: ${id} deleted successfully`);
+  await prisma.users.update({
+    where: { id },
+    data: { name, email, password: hashed, role },
+  });
+
+  const user = await prisma.users.findUnique({ where: { id } });
+
+  return res.json({
+    success: true,
+    message: `Successfully updated user with the id of ${id}!`,
+    data: user,
+  });
+});
+
+router.delete("/:id", async (req, res) => {
+  const id = parseInt(req.params.id);
+
+  const existing = await prisma.users.findUnique({ where: { id } });
+  if (!existing) {
+    return res.status(404).json({ msg: `User with ID: ${id} not found` });
+  }
+
+  await prisma.users.delete({ where: { id } });
+
+  return res.json({
+    success: true,
+    message: "Successfully deleted a book!",
+    data: null,
+  });
 });
 
 export default router;
