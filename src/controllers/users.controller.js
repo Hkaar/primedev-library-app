@@ -1,20 +1,16 @@
-import { Router } from "express";
-
 import prisma from "../../lib/database.js";
 import { hashPassword } from "../../lib/hash.js";
 
-const router = Router();
-
-router.get("/", async (req, res) => {
+export const getUsers = async (req, res) => {
   const users = await prisma.users.findMany();
   return res.json({
     success: true,
     message: "Successfully fetched all users!",
     data: users,
   });
-});
+};
 
-router.get("/:id", async (req, res) => {
+export const getUserById = async (req, res) => {
   const id = parseInt(req.params.id);
   const user = await prisma.users.findUnique({ where: { id } });
 
@@ -27,9 +23,9 @@ router.get("/:id", async (req, res) => {
     message: `Successfully fetched user with id ${id}!`,
     data: user,
   });
-});
+};
 
-router.post("/", async (req, res) => {
+export const createUser = async (req, res) => {
   const { name, email, password, role } = req.body;
 
   const hashed = await hashPassword(password);
@@ -43,9 +39,9 @@ router.post("/", async (req, res) => {
     message: "Successfully created user!",
     data: user,
   });
-});
+};
 
-router.put("/:id", async (req, res) => {
+export const updateUser = async (req, res) => {
   const id = parseInt(req.params.id);
   const { name, email, password, role } = req.body;
 
@@ -68,9 +64,9 @@ router.put("/:id", async (req, res) => {
     message: `Successfully updated user with the id of ${id}!`,
     data: user,
   });
-});
+};
 
-router.delete("/:id", async (req, res) => {
+export const deleteUser = async (req, res) => {
   const id = parseInt(req.params.id);
 
   const existing = await prisma.users.findUnique({ where: { id } });
@@ -82,9 +78,7 @@ router.delete("/:id", async (req, res) => {
 
   return res.json({
     success: true,
-    message: "Successfully deleted a book!",
+    message: "Successfully deleted a User!",
     data: null,
   });
-});
-
-export default router;
+};

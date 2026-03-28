@@ -1,18 +1,27 @@
-import { Router } from "express";
 import prisma from "../../lib/database.js";
 
-const router = Router();
-
-router.get("/", async (req, res) => {
+/**
+ * Get all the books from the database
+ *
+ * @param {express.Request} req
+ * @param {express.Response} res
+ */
+export const getBooks = async (req, res) => {
   const books = await prisma.books.findMany();
   return res.json({
     success: true,
     message: "Successfully fetched all books!",
     data: books,
   });
-});
+};
 
-router.get("/:id", async (req, res) => {
+/**
+ * Get a specific book from the database
+ *
+ * @param {express.Request} req
+ * @param {express.Response} res
+ */
+export const getBookById = async (req, res) => {
   const id = parseInt(req.params.id);
   const book = await prisma.books.findUnique({ where: { id } });
 
@@ -25,9 +34,15 @@ router.get("/:id", async (req, res) => {
     message: `Successfully fetched book with id ${id}!`,
     data: book,
   });
-});
+};
 
-router.post("/", async (req, res) => {
+/**
+ * Create a book into the database
+ *
+ * @param {express.Request} req
+ * @param {express.Response} res
+ */
+export const createBook = async (req, res) => {
   const { title, author, year } = req.body;
 
   const book = await prisma.books.create({
@@ -39,9 +54,15 @@ router.post("/", async (req, res) => {
     message: "Successfully created book!",
     data: book,
   });
-});
+};
 
-router.put("/:id", async (req, res) => {
+/**
+ * Update a stored book in the database
+ *
+ * @param {express.Request} req
+ * @param {express.Response} res
+ */
+export const updateBook = async (req, res) => {
   const id = parseInt(req.params.id);
   const { title, author, year } = req.body;
 
@@ -62,9 +83,15 @@ router.put("/:id", async (req, res) => {
     message: `Successfully updatedbook with the id of ${id}!`,
     data: book,
   });
-});
+};
 
-router.delete("/:id", async (req, res) => {
+/**
+ * Delete a stored book from the database
+ *
+ * @param {express.Request} req
+ * @param {express.Response} res
+ */
+export const deleteBook = async (req, res) => {
   const id = parseInt(req.params.id);
 
   const existing = await prisma.books.findUnique({ where: { id } });
@@ -79,6 +106,4 @@ router.delete("/:id", async (req, res) => {
     message: "Successfully deleted a book!",
     data: null,
   });
-});
-
-export default router;
+};
