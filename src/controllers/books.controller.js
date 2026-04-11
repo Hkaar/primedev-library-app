@@ -23,7 +23,10 @@ export const getBooks = async (req, res) => {
  */
 export const getBookById = async (req, res) => {
   const id = parseInt(req.params.id);
-  const book = await prisma.books.findUnique({ where: { id } });
+  const book = await prisma.books.findUnique({
+    where: { id },
+    include: { categories: true },
+  });
 
   if (!book) {
     return res.status(404).json({ msg: `Book with ID: ${id} not found` });
@@ -43,10 +46,20 @@ export const getBookById = async (req, res) => {
  * @param {express.Response} res
  */
 export const createBook = async (req, res) => {
-  const { title, author, year } = req.body;
+  const { title, author, year, categoryId } = req.body;
+
+  const category = await prisma.categories.findUnique({
+    where: { id: categoryId },
+  });
+
+  if (!category) {
+    return res
+      .status(404)
+      .json({ msg: `Category with ID: ${categoryId} not found` });
+  }
 
   const book = await prisma.books.create({
-    data: { title, author, year },
+    data: { title, author, year, categoryId },
   });
 
   return res.json({
@@ -64,16 +77,28 @@ export const createBook = async (req, res) => {
  */
 export const updateBook = async (req, res) => {
   const id = parseInt(req.params.id);
-  const { title, author, year } = req.body;
+  const { title, author, year, categoryId } = req.body;
 
   const existing = await prisma.books.findUnique({ where: { id } });
   if (!existing) {
     return res.status(404).json({ msg: `Book with ID: ${id} not found` });
   }
 
+  if (categoryId) {
+    const category = await prisma.categories.findUnique({
+      where: { id: categoryId },
+    });
+
+    if (!category) {
+      return res
+        .status(404)
+        .json({ msg: `Category with ID: ${categoryId} not found` });
+    }
+  }
+
   await prisma.books.update({
     where: { id },
-    data: { title, author, year },
+    data: { title, author, year, categoryId },
   });
 
   const book = await prisma.books.findUnique({ where: { id } });
