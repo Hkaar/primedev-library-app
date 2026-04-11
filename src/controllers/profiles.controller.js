@@ -11,10 +11,12 @@ export const getProfiles = async (req, res) => {
 
 export const getProfileById = async (req, res) => {
   const id = parseInt(req.params.id);
-  const profile = await prisma.profiles.findUnique({ where: { id } });
+  const profile = await prisma.profiles.findUnique({ where: { userId: id } });
 
   if (!profile) {
-    return res.status(404).json({ msg: `Profile with ID: ${id} not found` });
+    return res
+      .status(404)
+      .json({ msg: `Profile with user ID: ${id} not found` });
   }
 
   return res.json({
@@ -48,10 +50,12 @@ export const updateProfile = async (req, res) => {
   const id = parseInt(req.params.id);
   const { address, phone } = req.body;
 
-  const existing = await prisma.profiles.findUnique({ where: { id } });
+  const existing = await prisma.profiles.findUnique({ where: { userId: id } });
 
   if (!existing) {
-    return res.status(404).json({ msg: `Profile with ID: ${id} not found` });
+    return res
+      .status(404)
+      .json({ msg: `Profile with user ID: ${id} not found` });
   }
 
   await prisma.profiles.update({
@@ -59,21 +63,23 @@ export const updateProfile = async (req, res) => {
     data: { address: address, phone: phone },
   });
 
-  const user = await prisma.profiles.findUnique({ where: { id } });
+  const profile = await prisma.profiles.findUnique({ where: { id } });
 
   return res.json({
     success: true,
     message: `Successfully updated profile with the id of ${id}!`,
-    data: user,
+    data: profile,
   });
 };
 
 export const deleteProfile = async (req, res) => {
   const id = parseInt(req.params.id);
 
-  const existing = await prisma.profiles.findUnique({ where: { id } });
+  const existing = await prisma.profiles.findUnique({ where: { userId: id } });
   if (!existing) {
-    return res.status(404).json({ msg: `Profile with ID: ${id} not found` });
+    return res
+      .status(404)
+      .json({ msg: `Profile with user ID: ${id} not found` });
   }
 
   await prisma.profiles.delete({ where: { id } });
