@@ -19,11 +19,14 @@ model Users {
 
 model Books {
   id        Int      @id @default(autoincrement())
+  categoryId Int?
   title     String
   author    String
   year      Int
   available Boolean  @default(true)
   createdAt DateTime @default(now())
+
+  categories Categories? @relation(fields: [categoryId], references: [id])
 }
 
 model Profiles {
@@ -34,4 +37,12 @@ model Profiles {
   createdAt DateTime @default(now())
 
   user Users @relation(fields: [userId], references: [id])
+}
+
+model Categories {
+  id        Int      @id @default(autoincrement())
+  name      String
+  createdAt DateTime @default(now())
+  
+  books Books[]
 }
