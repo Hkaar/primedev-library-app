@@ -4,6 +4,7 @@ import authRouter from "./auth.routes.js";
 import bookRouter from "./books.routes.js";
 import userRouter from "./users.routes.js";
 import profileRouter from "./profiles.routes.js";
+import categoryRouter from "./categories.routes.js";
 
 const router = Router();
 
@@ -27,6 +28,7 @@ router.get("/", (req, res) => {
 router.use("/books", bookRouter);
 router.use("/users", userRouter);
 router.use("/profiles", profileRouter);
+router.use("/categories", categoryRouter);
 router.use("/auth", authRouter);
 
 export default router;
