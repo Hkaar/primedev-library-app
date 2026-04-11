@@ -1,5 +1,7 @@
 import prisma from "../../lib/database.js";
 
+import { isCategoryExist } from "./categories.controller.js";
+
 /**
  * Get all the books from the database
  *
@@ -48,9 +50,7 @@ export const getBookById = async (req, res) => {
 export const createBook = async (req, res) => {
   const { title, author, year, categoryId } = req.body;
 
-  const category = await prisma.categories.findUnique({
-    where: { id: categoryId },
-  });
+  const category = await isCategoryExist(categoryId);
 
   if (!category) {
     return res
@@ -85,9 +85,7 @@ export const updateBook = async (req, res) => {
   }
 
   if (categoryId) {
-    const category = await prisma.categories.findUnique({
-      where: { id: categoryId },
-    });
+    const category = await isCategoryExist(categoryId);
 
     if (!category) {
       return res

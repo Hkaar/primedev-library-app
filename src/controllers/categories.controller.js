@@ -78,3 +78,13 @@ export const deleteCategory = async (req, res) => {
     data: null,
   });
 };
+
+export const isCategoryExist = async (id) => {
+  const category = await prisma.categories.findUnique({
+    where: {
+      id: id,
+    },
+  });
+
+  return !!category;
+};
