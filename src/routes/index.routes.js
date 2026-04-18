@@ -5,6 +5,7 @@ import bookRouter from "./books.routes.js";
 import userRouter from "./users.routes.js";
 import profileRouter from "./profiles.routes.js";
 import categoryRouter from "./categories.routes.js";
+import borrowingRouter from "./borrowings.routes.js";
 
 const router = Router();
 
@@ -29,6 +30,7 @@ router.use("/books", bookRouter);
 router.use("/users", userRouter);
 router.use("/profiles", profileRouter);
 router.use("/categories", categoryRouter);
+router.use("/borrowings", borrowingRouter);
 router.use("/auth", authRouter);
 
 export default router;

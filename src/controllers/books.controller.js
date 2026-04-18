@@ -130,3 +130,13 @@ export const deleteBook = async (req, res) => {
     data: null,
   });
 };
+
+export const isBookExist = async (id) => {
+  const book = await prisma.books.findUnique({
+    where: {
+      id: id,
+    },
+  });
+
+  return !!book;
+};
