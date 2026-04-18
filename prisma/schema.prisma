@@ -8,25 +8,28 @@ datasource db {
 }
 
 model Users {
-  id        Int       @id @default(autoincrement())
-  name      String
-  email     String    @unique
-  password  String    @db.VarChar(255)
-  role      String    @default("USER")
-  createdAt DateTime  @default(now())
-  profiles  Profiles?
+  id         Int          @id @default(autoincrement())
+  name       String
+  email      String       @unique
+  password   String       @db.VarChar(255)
+  role       String       @default("USER")
+  createdAt  DateTime     @default(now())
+  
+  profiles   Profiles?
+  borrowings Borrowings[]
 }
 
 model Books {
-  id        Int      @id @default(autoincrement())
+  id         Int      @id @default(autoincrement())
   categoryId Int?
-  title     String
-  author    String
-  year      Int
-  available Boolean  @default(true)
-  createdAt DateTime @default(now())
+  title      String
+  author     String
+  year       Int
+  available  Boolean  @default(true)
+  createdAt  DateTime @default(now())
 
-  categories Categories? @relation(fields: [categoryId], references: [id])
+  categories Categories?  @relation(fields: [categoryId], references: [id])
+  borrowings Borrowings[]
 }
 
 model Profiles {
@@ -43,6 +46,17 @@ model Categories {
   id        Int      @id @default(autoincrement())
   name      String
   createdAt DateTime @default(now())
-  
+
   books Books[]
+}
+
+model Borrowings {
+  id          Int       @id @default(autoincrement())
+  userId      Int
+  bookId      Int
+  borrow_date DateTime  @default(now())
+  returned_at DateTime?
+  createdAt   DateTime  @default(now())
+  borrower    Users     @relation(fields: [userId], references: [id])
+  book        Books     @relation(fields: [bookId], references: [id])
 }
