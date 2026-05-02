@@ -14,7 +14,9 @@ export const getCategoryById = async (req, res) => {
   const category = await prisma.categories.findUnique({ where: { id } });
 
   if (!category) {
-    return res.status(404).json({ msg: `Category with ID: ${id} not found` });
+    return res
+      .status(404)
+      .json({ status: false, message: `Category with ID: ${id} not found` });
   }
 
   return res.json({
@@ -45,7 +47,9 @@ export const updateCategory = async (req, res) => {
   const existing = await prisma.categories.findUnique({ where: { id } });
 
   if (!existing) {
-    return res.status(404).json({ msg: `Category with ID: ${id} not found` });
+    return res
+      .status(404)
+      .json({ status: false, message: `Category with ID: ${id} not found` });
   }
 
   await prisma.categories.update({
@@ -67,7 +71,9 @@ export const deleteCategory = async (req, res) => {
 
   const existing = await prisma.categories.findUnique({ where: { id } });
   if (!existing) {
-    return res.status(404).json({ msg: `Category with ID: ${id} not found` });
+    return res
+      .status(404)
+      .json({ status: false, message: `Category with ID: ${id} not found` });
   }
 
   await prisma.categories.delete({ where: { id } });

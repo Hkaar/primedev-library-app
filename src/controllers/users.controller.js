@@ -20,7 +20,9 @@ export const getUserById = async (req, res) => {
   });
 
   if (!user) {
-    return res.status(404).json({ msg: `User with ID: ${id} not found` });
+    return res
+      .status(404)
+      .json({ status: false, message: `User with ID: ${id} not found` });
   }
 
   return res.json({
@@ -52,7 +54,9 @@ export const updateUser = async (req, res) => {
 
   const existing = await prisma.users.findUnique({ where: { id } });
   if (!existing) {
-    return res.status(404).json({ msg: `User with ID: ${id} not found` });
+    return res
+      .status(404)
+      .json({ status: false, message: `User with ID: ${id} not found` });
   }
 
   const hashed = await hashPassword(password);
@@ -76,7 +80,9 @@ export const deleteUser = async (req, res) => {
 
   const existing = await prisma.users.findUnique({ where: { id } });
   if (!existing) {
-    return res.status(404).json({ msg: `User with ID: ${id} not found` });
+    return res
+      .status(404)
+      .json({ status: false, message: `User with ID: ${id} not found` });
   }
 
   await prisma.users.delete({ where: { id } });

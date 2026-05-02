@@ -36,7 +36,7 @@ export const getBorrowingById = async (req, res) => {
   });
 
   if (!borrowing) {
-    return res.json({
+    return res.status(404).json({
       success: false,
       message: `Borrowing with ID: ${id} not found`,
     });
@@ -59,7 +59,7 @@ export const createBorrowing = async (req, res) => {
   const userExists = await isUserExist(userId);
 
   if (!userExists) {
-    return res.json({
+    return res.status(404).json({
       success: false,
       message: `User with ID: ${userId} not found`,
     });
@@ -68,7 +68,7 @@ export const createBorrowing = async (req, res) => {
   const bookExists = await isBookExist(bookId);
 
   if (!bookExists) {
-    return res.json({
+    return res.status(404).json({
       success: false,
       message: `Book with ID: ${bookId} not found`,
     });
@@ -109,14 +109,14 @@ export const returnBook = async (req, res) => {
   });
 
   if (!borrowing) {
-    return res.json({
+    return res.status(404).json({
       success: false,
       message: "Borrowing not found",
     });
   }
 
   if (borrowing.returned_at) {
-    return res.json({
+    return res.status(404).json({
       success: false,
       message: "Book already returned",
     });
@@ -159,7 +159,7 @@ export const deleteBorrowing = async (req, res) => {
   });
 
   if (!borrowing) {
-    return res.json({
+    return res.status(404).json({
       success: false,
       message: "Borrowing not found",
     });

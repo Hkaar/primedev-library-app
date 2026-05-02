@@ -31,7 +31,9 @@ export const getBookById = async (req, res) => {
   });
 
   if (!book) {
-    return res.status(404).json({ msg: `Book with ID: ${id} not found` });
+    return res
+      .status(404)
+      .json({ status: false, message: `Book with ID: ${id} not found` });
   }
 
   return res.json({
@@ -55,7 +57,10 @@ export const createBook = async (req, res) => {
   if (!category) {
     return res
       .status(404)
-      .json({ msg: `Category with ID: ${categoryId} not found` });
+      .json({
+        status: false,
+        message: `Category with ID: ${categoryId} not found`,
+      });
   }
 
   const book = await prisma.books.create({
@@ -81,7 +86,9 @@ export const updateBook = async (req, res) => {
 
   const existing = await prisma.books.findUnique({ where: { id } });
   if (!existing) {
-    return res.status(404).json({ msg: `Book with ID: ${id} not found` });
+    return res
+      .status(404)
+      .json({ status: false, message: `Book with ID: ${id} not found` });
   }
 
   if (categoryId) {
@@ -119,7 +126,9 @@ export const deleteBook = async (req, res) => {
 
   const existing = await prisma.books.findUnique({ where: { id } });
   if (!existing) {
-    return res.status(404).json({ msg: `Book with ID: ${id} not found` });
+    return res
+      .status(404)
+      .json({ status: false, message: `Book with ID: ${id} not found` });
   }
 
   await prisma.books.delete({ where: { id } });

@@ -11,7 +11,7 @@ import {
 const router = Router();
 
 router.get("/", getAllBorrowings);
-router.get("/:id");
+router.get("/:id", getBorrowingById);
 router.post("/", createBorrowing);
 router.put("/return/:id", returnBook);
 router.delete("/:id", deleteBorrowing);

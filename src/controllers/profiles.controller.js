@@ -16,7 +16,10 @@ export const getProfileById = async (req, res) => {
   if (!profile) {
     return res
       .status(404)
-      .json({ msg: `Profile with user ID: ${id} not found` });
+      .json({
+        status: false,
+        message: `Profile with user ID: ${id} not found`,
+      });
   }
 
   return res.json({
@@ -32,7 +35,9 @@ export const createProfile = async (req, res) => {
   const user = await prisma.users.findUnique({ where: { id: userId } });
 
   if (!user) {
-    return res.status(404).json({ msg: `User with ID: ${userId} not found` });
+    return res
+      .status(404)
+      .json({ status: false, message: `User with ID: ${userId} not found` });
   }
 
   const profile = await prisma.profiles.create({
@@ -55,7 +60,10 @@ export const updateProfile = async (req, res) => {
   if (!existing) {
     return res
       .status(404)
-      .json({ msg: `Profile with user ID: ${id} not found` });
+      .json({
+        status: false,
+        message: `Profile with user ID: ${id} not found`,
+      });
   }
 
   await prisma.profiles.update({
@@ -79,7 +87,10 @@ export const deleteProfile = async (req, res) => {
   if (!existing) {
     return res
       .status(404)
-      .json({ msg: `Profile with user ID: ${id} not found` });
+      .json({
+        status: false,
+        message: `Profile with user ID: ${id} not found`,
+      });
   }
 
   await prisma.profiles.delete({ where: { id } });
