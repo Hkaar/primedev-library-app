@@ -8,15 +8,20 @@ import {
   deleteBook,
 } from "../controllers/books.controller.js";
 
+import {
+  createBookValidation,
+  updateBookValidation,
+} from "../validations/book.validations.js";
+
 const router = Router();
 
 router.get("/", getBooks);
 
 router.get("/:id", getBookById);
 
-router.post("/", createBook);
+router.post("/", createBookValidation, createBook);
 
-router.put("/:id", updateBook);
+router.put("/:id", updateBookValidation, updateBook);
 
 router.delete("/:id", deleteBook);
 

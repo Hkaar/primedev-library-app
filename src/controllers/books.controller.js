@@ -1,6 +1,8 @@
 import prisma from "../../lib/database.js";
+import { validationResult } from "express-validator";
 
 import { isCategoryExist } from "./categories.controller.js";
+import { checkValidation } from "../../helpers/validator.js";
 
 /**
  * Get all the books from the database
@@ -50,17 +52,17 @@ export const getBookById = async (req, res) => {
  * @param {express.Response} res
  */
 export const createBook = async (req, res) => {
+  if (!checkValidation(req, res)) return res;
+
   const { title, author, year, categoryId } = req.body;
 
   const category = await isCategoryExist(categoryId);
 
   if (!category) {
-    return res
-      .status(404)
-      .json({
-        status: false,
-        message: `Category with ID: ${categoryId} not found`,
-      });
+    return res.status(404).json({
+      status: false,
+      message: `Category with ID: ${categoryId} not found`,
+    });
   }
 
   const book = await prisma.books.create({
@@ -80,7 +82,9 @@ export const createBook = async (req, res) => {
  * @param {express.Request} req
  * @param {express.Response} res
  */
-export const updateBook = async (req, res) => {
+export const updateBook = async (req, res, next) => {
+  if (!checkValidation(req, res)) return res;
+
   const id = parseInt(req.params.id);
   const { title, author, year, categoryId } = req.body;
 
