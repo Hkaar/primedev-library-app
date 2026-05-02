@@ -7,13 +7,14 @@ import {
   returnBook,
   deleteBorrowing,
 } from "../controllers/borrowings.controller.js";
+import { authorizeAdmin } from "../middlewares/admin.middleware.js";
 
 const router = Router();
 
 router.get("/", getAllBorrowings);
 router.get("/:id", getBorrowingById);
-router.post("/", createBorrowing);
-router.put("/return/:id", returnBook);
-router.delete("/:id", deleteBorrowing);
+router.post("/", authorizeAdmin, createBorrowing);
+router.put("/return/:id", authorizeAdmin, returnBook);
+router.delete("/:id", authorizeAdmin, deleteBorrowing);
 
 export default router;

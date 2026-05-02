@@ -7,6 +7,8 @@ import profileRouter from "./profiles.routes.js";
 import categoryRouter from "./categories.routes.js";
 import borrowingRouter from "./borrowings.routes.js";
 
+import { authenticateToken } from "../middlewares/auth.middleware.js";
+
 const router = Router();
 
 /**
@@ -26,11 +28,11 @@ router.get("/", (req, res) => {
 //   }
 // });
 
-router.use("/books", bookRouter);
-router.use("/users", userRouter);
-router.use("/profiles", profileRouter);
-router.use("/categories", categoryRouter);
-router.use("/borrowings", borrowingRouter);
+router.use("/books", authenticateToken, bookRouter);
+router.use("/users", authenticateToken, userRouter);
+router.use("/profiles", authenticateToken, profileRouter);
+router.use("/categories", authenticateToken, categoryRouter);
+router.use("/borrowings", authenticateToken, borrowingRouter);
 router.use("/auth", authRouter);
 
 export default router;

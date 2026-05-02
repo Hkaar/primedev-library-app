@@ -7,6 +7,7 @@ import {
   updateCategory,
   deleteCategory,
 } from "../controllers/categories.controller.js";
+import { authorizeAdmin } from "../middlewares/admin.middleware.js";
 
 const router = Router();
 
@@ -14,10 +15,10 @@ router.get("/", getCategories);
 
 router.get("/:id", getCategoryById);
 
-router.post("/", createCategory);
+router.post("/", authorizeAdmin, createCategory);
 
-router.put("/:id", updateCategory);
+router.put("/:id", authorizeAdmin, updateCategory);
 
-router.delete("/:id", deleteCategory);
+router.delete("/:id", authorizeAdmin, deleteCategory);
 
 export default router;

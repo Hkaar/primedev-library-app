@@ -13,16 +13,18 @@ import {
   updateBookValidation,
 } from "../validations/book.validations.js";
 
+import { authorizeAdmin } from "../middlewares/admin.middleware.js";
+
 const router = Router();
 
 router.get("/", getBooks);
 
 router.get("/:id", getBookById);
 
-router.post("/", createBookValidation, createBook);
+router.post("/", authorizeAdmin, createBookValidation, createBook);
 
-router.put("/:id", updateBookValidation, updateBook);
+router.put("/:id", authorizeAdmin, updateBookValidation, updateBook);
 
-router.delete("/:id", deleteBook);
+router.delete("/:id", authorizeAdmin, deleteBook);
 
 export default router;

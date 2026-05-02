@@ -7,6 +7,7 @@ import {
   updateProfile,
   deleteProfile,
 } from "../controllers/profiles.controller.js";
+import { authorizeAdmin } from "../middlewares/admin.middleware.js";
 
 const router = Router();
 
@@ -18,6 +19,6 @@ router.post("/", createProfile);
 
 router.put("/:id", updateProfile);
 
-router.delete("/:id", deleteProfile);
+router.delete("/:id", authorizeAdmin, deleteProfile);
 
 export default router;
