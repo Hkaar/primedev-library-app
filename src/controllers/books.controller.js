@@ -1,4 +1,6 @@
 import prisma from "../../lib/database.js";
+import logger from "../../lib/logger.js";
+
 import { validationResult } from "express-validator";
 
 import { isCategoryExist } from "./categories.controller.js";
@@ -13,21 +15,31 @@ import { getFileUrl, uploadFile, deleteFile } from "./cloudinary.controller.js";
  * @param {express.Response} res
  */
 export const getBooks = async (req, res) => {
-  const books = await prisma.books.findMany();
+  try {
+    const books = await prisma.books.findMany();
 
-  books.forEach((book) => {
-    if (!book.coverUrl) {
-      book.coverUrl = null;
-    } else {
-      book.coverUrl = getFileUrl(book.coverUrl);
-    }
-  });
+    books.forEach((book) => {
+      if (!book.coverUrl) {
+        book.coverUrl = null;
+      } else {
+        book.coverUrl = getFileUrl(book.coverUrl);
+      }
+    });
 
-  return res.json({
-    success: true,
-    message: "Successfully fetched all books!",
-    data: books,
-  });
+    return res.json({
+      success: true,
+      message: "Successfully fetched all books!",
+      data: books,
+    });
+  } catch (error) {
+    logger.error({ error: error.message }, "Failed to retrieve books");
+
+    res.status(500).json({
+      success: false,
+      message: "An error occurred while retrieving books",
+      error: error.message,
+    });
+  }
 };
 
 /**
@@ -69,42 +81,51 @@ export const getBookById = async (req, res) => {
  * @param {express.Response} res
  */
 export const createBook = async (req, res) => {
-  if (!checkValidation(req, res)) return res;
+  try {
+    if (!checkValidation(req, res)) return res;
 
-  const { title, author, year, categoryId } = req.body;
+    const { title, author, year, categoryId } = req.body;
 
-  const category = await isCategoryExist(parseInt(categoryId)); // fix
+    const category = await isCategoryExist(parseInt(categoryId)); // fix
 
-  if (!category) {
-    return res.status(404).json({
-      status: false,
-      message: `Category with ID: ${categoryId} not found`,
+    if (!category) {
+      return res.status(404).json({
+        status: false,
+        message: `Category with ID: ${categoryId} not found`,
+      });
+    }
+
+    const cover = req.file;
+    let cloudinaryId = null;
+
+    if (cover) {
+      const result = await uploadFile(cover);
+      cloudinaryId = result.public_id;
+    }
+
+    const book = await prisma.books.create({
+      data: {
+        title,
+        author,
+        year: parseInt(year),
+        categoryId: parseInt(categoryId),
+        coverUrl: cloudinaryId,
+      },
+    });
+
+    return res.json({
+      success: true,
+      message: "Successfully created book!",
+      data: book,
+    });
+  } catch (error) {
+    logger.error({ error: error.message }, "Failed to create book");
+    res.status(500).json({
+      success: false,
+      message: "An error occurred while creating book",
+      error: error.message,
     });
   }
-
-  const cover = req.file;
-  let cloudinaryId = null;
-
-  if (cover) {
-    const result = await uploadFile(cover);
-    cloudinaryId = result.public_id;
-  }
-
-  const book = await prisma.books.create({
-    data: {
-      title,
-      author,
-      year: parseInt(year),
-      categoryId: parseInt(categoryId),
-      coverUrl: cloudinaryId,
-    },
-  });
-
-  return res.json({
-    success: true,
-    message: "Successfully created book!",
-    data: book,
-  });
 };
 
 /**
@@ -114,61 +135,73 @@ export const createBook = async (req, res) => {
  * @param {express.Response} res
  */
 export const updateBook = async (req, res, next) => {
-  if (!checkValidation(req, res)) return res;
+  try {
+    if (!checkValidation(req, res)) return res;
 
-  const id = parseInt(req.params.id);
-  const { title, author, year, categoryId } = req.body;
+    const id = parseInt(req.params.id);
+    const { title, author, year, categoryId } = req.body;
 
-  const existing = await prisma.books.findUnique({ where: { id } });
-  if (!existing) {
-    return res
-      .status(404)
-      .json({ status: false, message: `Book with ID: ${id} not found` });
-  }
-
-  if (categoryId) {
-    const category = await isCategoryExist(parseInt(categoryId));
-
-    if (!category) {
+    const existing = await prisma.books.findUnique({ where: { id } });
+    if (!existing) {
       return res
         .status(404)
-        .json({ msg: `Category with ID: ${categoryId} not found` });
-    }
-  }
-
-  const cover = req.file;
-  let cloudinaryId = existing.coverUrl;
-
-  // Jika ada file cover yang diunggah, unggah ke Cloudinary dan dapatkan public_id-nya
-  if (cover) {
-    // Jika buku sudah memiliki cover sebelumnya,
-    // hapus file cover lama dari Cloudinary menggunakan public_id yang disimpan di database
-    if (existing.coverUrl) {
-      const deleted = await deleteFile(existing.coverUrl);
+        .json({ status: false, message: `Book with ID: ${id} not found` });
     }
 
-    const result = await uploadFile(cover);
-    cloudinaryId = result.public_id;
+    if (categoryId) {
+      const category = await isCategoryExist(parseInt(categoryId));
+
+      if (!category) {
+        return res
+          .status(404)
+          .json({ msg: `Category with ID: ${categoryId} not found` });
+      }
+    }
+
+    const cover = req.file;
+    let cloudinaryId = existing.coverUrl;
+
+    // Jika ada file cover yang diunggah, unggah ke Cloudinary dan dapatkan public_id-nya
+    if (cover) {
+      // Jika buku sudah memiliki cover sebelumnya,
+      // hapus file cover lama dari Cloudinary menggunakan public_id yang disimpan di database
+      if (existing.coverUrl) {
+        const deleted = await deleteFile(existing.coverUrl);
+      }
+
+      const result = await uploadFile(cover);
+      cloudinaryId = result.public_id;
+    }
+
+    await prisma.books.update({
+      where: { id },
+      data: {
+        title,
+        author,
+        year: parseInt(year),
+        categoryId: parseInt(categoryId),
+        coverUrl: cloudinaryId,
+      },
+    });
+
+    const book = await prisma.books.findUnique({ where: { id } });
+
+    return res.json({
+      success: true,
+      message: `Successfully updated book with the id of ${id}!`,
+      data: book,
+    });
+  } catch (error) {
+    logger.error(
+      { bookId: req.params.id, error: error.message },
+      "Failed to update book",
+    );
+    res.status(500).json({
+      success: false,
+      message: "An error occurred while updating book",
+      error: error.message,
+    });
   }
-
-  await prisma.books.update({
-    where: { id },
-    data: {
-      title,
-      author,
-      year: parseInt(year),
-      categoryId: parseInt(categoryId),
-      coverUrl: cloudinaryId,
-    },
-  });
-
-  const book = await prisma.books.findUnique({ where: { id } });
-
-  return res.json({
-    success: true,
-    message: `Successfully updated book with the id of ${id}!`,
-    data: book,
-  });
 };
 
 /**
@@ -178,26 +211,38 @@ export const updateBook = async (req, res, next) => {
  * @param {express.Response} res
  */
 export const deleteBook = async (req, res) => {
-  const id = parseInt(req.params.id);
+  try {
+    const id = parseInt(req.params.id);
 
-  const existing = await prisma.books.findUnique({ where: { id } });
-  if (!existing) {
-    return res
-      .status(404)
-      .json({ status: false, message: `Book with ID: ${id} not found` });
+    const existing = await prisma.books.findUnique({ where: { id } });
+    if (!existing) {
+      return res
+        .status(404)
+        .json({ status: false, message: `Book with ID: ${id} not found` });
+    }
+
+    if (existing.coverUrl) {
+      const deleted = await deleteFile(existing.coverUrl);
+    }
+
+    await prisma.books.delete({ where: { id } });
+
+    return res.json({
+      success: true,
+      message: "Successfully deleted a book!",
+      data: null,
+    });
+  } catch (error) {
+    logger.error(
+      { bookId: req.params.id, error: error.message },
+      "Failed to delete book",
+    );
+    res.status(500).json({
+      success: false,
+      message: "An error occurred while deleting book",
+      error: error.message,
+    });
   }
-
-  if (existing.coverUrl) {
-    const deleted = await deleteFile(existing.coverUrl);
-  }
-
-  await prisma.books.delete({ where: { id } });
-
-  return res.json({
-    success: true,
-    message: "Successfully deleted a book!",
-    data: null,
-  });
 };
 
 export const isBookExist = async (id) => {
