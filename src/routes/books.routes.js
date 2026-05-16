@@ -1,5 +1,7 @@
 import { Router } from "express";
 
+import multer from "multer";
+
 import {
   getBooks,
   getBookById,
@@ -7,6 +9,8 @@ import {
   updateBook,
   deleteBook,
 } from "../controllers/books.controller.js";
+
+const upload = multer({ storage: multer.memoryStorage() });
 
 import {
   createBookValidation,
@@ -21,9 +25,21 @@ router.get("/", getBooks);
 
 router.get("/:id", getBookById);
 
-router.post("/", authorizeAdmin, createBookValidation, createBook);
+router.post(
+  "/",
+  authorizeAdmin,
+  createBookValidation,
+  upload.single("cover"),
+  createBook,
+);
 
-router.put("/:id", authorizeAdmin, updateBookValidation, updateBook);
+router.put(
+  "/:id",
+  authorizeAdmin,
+  updateBookValidation,
+  upload.single("cover"),
+  updateBook,
+);
 
 router.delete("/:id", authorizeAdmin, deleteBook);
 
