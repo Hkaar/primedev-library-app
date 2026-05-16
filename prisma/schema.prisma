@@ -26,7 +26,7 @@ model Books {
   author       String
   year         Int
   available    Boolean  @default(true)
-  cloudinaryId String?
+  coverUrl String?
   createdAt    DateTime @default(now())
 
   categories Categories?  @relation(fields: [categoryId], references: [id])
