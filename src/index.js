@@ -18,13 +18,11 @@ app.use((req, res, next) => {
 app.use(pinoHttp);
 app.use(router);
 
-if (process.env.ENV !== "production" || process.env.ENV !== "PRODUCTION") {
-  const port = process.env.PORT || 3000;
+const port = process.env.PORT || 3000;
 
-  app.listen(port, () => {
-    logger.info(`Library API is running at http://localhost:${port}`);
-    logger.info("Application started successfully");
-  });
-}
+app.listen(port, () => {
+  logger.info(`Library API is running on ${port}`);
+  logger.info("Application started successfully");
+});
 
 export default app;
