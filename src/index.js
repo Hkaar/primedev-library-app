@@ -1,6 +1,5 @@
 import express from "express";
 import pinoHttp from "pino-http";
-
 import router from "./routes/index.routes.js";
 import logger from "../lib/logger.js";
 
@@ -8,26 +7,16 @@ const app = express();
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(pinoHttp());
 
-app.use(pinoHttp);
 app.use(router);
 
-app.get("/", (req, res) => {
-  res.json({ ok: true });
-});
-
-if (
-  process.env.ENV !== "production" &&
-  process.env.ENV !== "PRODUCTION" &&
-  process.env.NODE_ENV !== "production"
-) {
+if (process.env.NODE_ENV !== "production") {
   const port = process.env.PORT || 3000;
-
   app.listen(port, () => {
     logger.info(`Library API is running at http://localhost:${port}`);
     logger.info("Application started successfully");
   });
 }
 
-const handler = (req, res) => app(req, res);
-export default handler;
+export default app;
