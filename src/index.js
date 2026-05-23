@@ -19,6 +19,10 @@ app.use(router);
 
 const port = process.env.PORT || 3000;
 
+app.get("/", (req, res) => {
+  res.json({ ok: true });
+});
+
 if (
   process.env.ENV !== "production" &&
   process.env.ENV !== "PRODUCTION" &&
