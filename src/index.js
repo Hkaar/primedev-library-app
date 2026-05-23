@@ -19,7 +19,11 @@ app.use(router);
 
 const port = process.env.PORT || 3000;
 
-if (process.env.ENV !== "production" && process.env.ENV !== "PRODUCTION") {
+if (
+  process.env.ENV !== "production" &&
+  process.env.ENV !== "PRODUCTION" &&
+  process.env.NODE_ENV !== "production"
+) {
   const port = process.env.PORT || 3000;
 
   app.listen(port, () => {
