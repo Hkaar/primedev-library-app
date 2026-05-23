@@ -9,15 +9,8 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.use((req, res, next) => {
-  console.log(`[${new Date().toISOString()}] ${req.method} ${req.path}`);
-  next();
-});
-
 app.use(pinoHttp);
 app.use(router);
-
-const port = process.env.PORT || 3000;
 
 app.get("/", (req, res) => {
   res.json({ ok: true });
