@@ -5,7 +5,6 @@ import router from "./routes/index.routes.js";
 import logger from "../lib/logger.js";
 
 const app = express();
-const port = process.env.PORT || 3000;
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -20,7 +19,7 @@ app.use(router);
 
 const port = process.env.PORT || 3000;
 
-if (process.env.ENV !== 'production' || process.env.ENV !== 'PRODUCTION') {
+if (process.env.ENV !== 'production' && process.env.ENV !== 'PRODUCTION') {
   const port = process.env.PORT || 3000
 
   app.listen(port, () => {
