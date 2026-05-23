@@ -85,12 +85,23 @@ Server starts on `http://localhost:3000` (or your configured `PORT`).
 
 ## Project Structure
 
-```markdown
-src/           # App source (routes, controllers, middleware)
-lib/           # Shared utilities / helpers
-helpers/       # Additional helper modules
-prisma/        # Prisma schema & migrations
-.github/       # CI/CD workflows
+```text
+primedev-library-app/
+├── .github/
+│   └── workflows/          # CI/CD GitHub Actions
+├── helpers/                # Utility/helper functions
+├── lib/                    # Shared libraries & modules
+├── prisma/                 # Prisma schema & migrations
+│   ├── schema.prisma
+│   └── migrations/
+├── src/                    # Main application source
+│   ├── routes/             # Express route handlers
+│   ├── controllers/        # Business logic
+│   └── middleware/         # Express middleware
+├── .env.example            # Environment variable template
+├── prisma.config.js        # Prisma configuration
+├── package.json
+└── README.md
 ```
 
 ## Scripts
@@ -98,7 +109,3 @@ prisma/        # Prisma schema & migrations
 | Command | Description |
 |---------|-------------|
 | `npm run dev` | Start dev server with hot reload |
-
-## License
-
-MIT
