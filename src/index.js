@@ -36,4 +36,5 @@ if (
   });
 }
 
-export default app;
+const handler = (req, res) => app(req, res);
+export default handler;
