@@ -1,7 +1,8 @@
-import prisma from "../../lib/database.js";
-import logger from "../../lib/logger.js";
+import prisma from "@/lib/database.js";
+import logger from "@/lib/logger.js";
+import { Request, Response } from "express";
 
-export const getCategories = async (req, res) => {
+export const getCategories = async (req: Request, res: Response) => {
   try {
     const categories = await prisma.categories.findMany();
     return res.json({
@@ -10,18 +11,18 @@ export const getCategories = async (req, res) => {
       data: categories,
     });
   } catch (error) {
-    logger.error({ error: error.message }, "Failed to retrieve categories");
+    logger.error({ error: (error as any).message }, "Failed to retrieve categories");
     res.status(500).json({
       success: false,
       message: "An error occurred while retrieving categories",
-      error: error.message,
+      error: (error as any).message,
     });
   }
 };
 
-export const getCategoryById = async (req, res) => {
+export const getCategoryById = async (req: Request, res: Response) => {
   try {
-    const id = parseInt(req.params.id);
+    const id = parseInt(req.params.id as string);
     const category = await prisma.categories.findUnique({ where: { id } });
 
     if (!category) {
@@ -37,18 +38,18 @@ export const getCategoryById = async (req, res) => {
     });
   } catch (error) {
     logger.error(
-      { categoryId: req.params.id, error: error.message },
+      { categoryId: req.params.id, error: (error as any).message },
       "Failed to retrieve category",
     );
     res.status(500).json({
       success: false,
       message: "An error occurred while retrieving category",
-      error: error.message,
+      error: (error as any).message,
     });
   }
 };
 
-export const createCategory = async (req, res) => {
+export const createCategory = async (req: Request, res: Response) => {
   try {
     const { name } = req.body;
 
@@ -62,18 +63,18 @@ export const createCategory = async (req, res) => {
       data: category,
     });
   } catch (error) {
-    logger.error({ error: error.message }, "Failed to create category");
+    logger.error({ error: (error as any).message }, "Failed to create category");
     res.status(500).json({
       success: false,
       message: "An error occurred while creating category",
-      error: error.message,
+      error: (error as any).message,
     });
   }
 };
 
-export const updateCategory = async (req, res) => {
+export const updateCategory = async (req: Request, res: Response) => {
   try {
-    const id = parseInt(req.params.id);
+    const id = parseInt(req.params.id as string);
     const { name } = req.body;
 
     const existing = await prisma.categories.findUnique({ where: { id } });
@@ -98,20 +99,20 @@ export const updateCategory = async (req, res) => {
     });
   } catch (error) {
     logger.error(
-      { categoryId: req.params.id, error: error.message },
+      { categoryId: req.params.id, error: (error as any).message },
       "Failed to update category",
     );
     res.status(500).json({
       success: false,
       message: "An error occurred while updating category",
-      error: error.message,
+      error: (error as any).message,
     });
   }
 };
 
-export const deleteCategory = async (req, res) => {
+export const deleteCategory = async (req: Request, res: Response) => {
   try {
-    const id = parseInt(req.params.id);
+    const id = parseInt(req.params.id as string);
 
     const existing = await prisma.categories.findUnique({ where: { id } });
     if (!existing) {
@@ -129,20 +130,20 @@ export const deleteCategory = async (req, res) => {
     });
   } catch (error) {
     logger.error(
-      { categoryId: req.params.id, error: error.message },
+      { categoryId: req.params.id, error: (error as any).message },
       "Failed to delete category",
     );
     res.status(500).json({
       success: false,
       message: "An error occurred while deleting category",
-      error: error.message,
+      error: (error as any).message,
     });
   }
 };
 
-export const isCategoryExist = async (id) => {
+export const isCategoryExist = async (id: number) => {
   const category = await prisma.categories.findUnique({
-    where: { id: parseInt(id) },
+    where: { id },
   });
   return !!category;
 };

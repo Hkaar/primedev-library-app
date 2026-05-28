@@ -1,7 +1,8 @@
-import prisma from "../../lib/database.js";
-import logger from "../../lib/logger.js";
+import prisma from "@/lib/database.js";
+import logger from "@/lib/logger.js";
+import { Request, Response } from "express";
 
-export const getProfiles = async (req, res) => {
+export const getProfiles = async (req: Request, res: Response) => {
   try {
     const profiles = await prisma.profiles.findMany();
     return res.json({
@@ -10,18 +11,18 @@ export const getProfiles = async (req, res) => {
       data: profiles,
     });
   } catch (error) {
-    logger.error({ error: error.message }, "Failed to retrieve profiles");
+    logger.error({ error: (error as any).message }, "Failed to retrieve profiles");
     res.status(500).json({
       success: false,
       message: "An error occurred while retrieving profiles",
-      error: error.message,
+      error: (error as any).message,
     });
   }
 };
 
-export const getProfileById = async (req, res) => {
+export const getProfileById = async (req: Request, res: Response) => {
   try {
-    const id = parseInt(req.params.id);
+    const id = parseInt(req.params.id as string);
     const profile = await prisma.profiles.findUnique({ where: { userId: id } });
 
     if (!profile) {
@@ -38,18 +39,18 @@ export const getProfileById = async (req, res) => {
     });
   } catch (error) {
     logger.error(
-      { userId: req.params.id, error: error.message },
+      { userId: req.params.id, error: (error as any).message },
       "Failed to retrieve profile",
     );
     res.status(500).json({
       success: false,
       message: "An error occurred while retrieving profile",
-      error: error.message,
+      error: (error as any).message,
     });
   }
 };
 
-export const createProfile = async (req, res) => {
+export const createProfile = async (req: Request, res: Response) => {
   try {
     const { userId, address, phone } = req.body;
 
@@ -73,18 +74,18 @@ export const createProfile = async (req, res) => {
       data: profile,
     });
   } catch (error) {
-    logger.error({ error: error.message }, "Failed to create profile");
+    logger.error({ error: (error as any).message }, "Failed to create profile");
     res.status(500).json({
       success: false,
       message: "An error occurred while creating profile",
-      error: error.message,
+      error: (error as any).message,
     });
   }
 };
 
-export const updateProfile = async (req, res) => {
+export const updateProfile = async (req: Request, res: Response) => {
   try {
-    const id = parseInt(req.params.id);
+    const id = parseInt(req.params.id as string);
     const { address, phone } = req.body;
 
     const existing = await prisma.profiles.findUnique({
@@ -99,11 +100,11 @@ export const updateProfile = async (req, res) => {
     }
 
     await prisma.profiles.update({
-      where: { id },
+      where: { id: existing.id },
       data: { address, phone },
     });
 
-    const profile = await prisma.profiles.findUnique({ where: { id } });
+    const profile = await prisma.profiles.findUnique({ where: { id: existing.id } });
 
     return res.json({
       success: true,
@@ -112,20 +113,20 @@ export const updateProfile = async (req, res) => {
     });
   } catch (error) {
     logger.error(
-      { userId: req.params.id, error: error.message },
+      { userId: req.params.id, error: (error as any).message },
       "Failed to update profile",
     );
     res.status(500).json({
       success: false,
       message: "An error occurred while updating profile",
-      error: error.message,
+      error: (error as any).message,
     });
   }
 };
 
-export const deleteProfile = async (req, res) => {
+export const deleteProfile = async (req: Request, res: Response) => {
   try {
-    const id = parseInt(req.params.id);
+    const id = parseInt(req.params.id as string);
 
     const existing = await prisma.profiles.findUnique({
       where: { userId: id },
@@ -137,7 +138,7 @@ export const deleteProfile = async (req, res) => {
       });
     }
 
-    await prisma.profiles.delete({ where: { id } });
+    await prisma.profiles.delete({ where: { id: existing.id } });
 
     return res.json({
       success: true,
@@ -146,13 +147,13 @@ export const deleteProfile = async (req, res) => {
     });
   } catch (error) {
     logger.error(
-      { userId: req.params.id, error: error.message },
+      { userId: req.params.id, error: (error as any).message },
       "Failed to delete profile",
     );
     res.status(500).json({
       success: false,
       message: "An error occurred while deleting profile",
-      error: error.message,
+      error: (error as any).message,
     });
   }
 };

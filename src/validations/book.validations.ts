@@ -12,7 +12,7 @@ export const createBookValidation = [
     .notEmpty()
     .withMessage("Author is required"),
   body("year")
-    .isNumeric({ min: 1880 })
+    .isInt({ min: 1880 })
     .withMessage("Year must be a positive integer")
     .notEmpty()
     .withMessage("Year is required")
@@ -58,7 +58,7 @@ export const updateBookValidation = [
     .withMessage("Author is required"),
   body("year")
     .optional()
-    .isNumeric({ min: 1880 })
+    .isInt({ min: 1880 })
     .withMessage("Year must be a positive integer")
     .notEmpty()
     .withMessage("Year is required")

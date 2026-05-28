@@ -1,4 +1,6 @@
-import prisma from "../../lib/database.js";
+import prisma from "@/lib/database.js";
+import logger from "@/lib/logger.js";
+import { Request, Response } from "express";
 
 import { isUserExist } from "./users.controller.js";
 import { isBookExist } from "./books.controller.js";
@@ -6,10 +8,10 @@ import { isBookExist } from "./books.controller.js";
 /**
  * Get all books thats been borrowed
  *
- * @param {Express.Request} req
- * @param {Express.Response} res
+ * @param {Request} req
+ * @param {Response} res
  */
-export const getAllBorrowings = async (req, res) => {
+export const getAllBorrowings = async (req: Request, res: Response) => {
   try {
     const borrowings = await prisma.borrowings.findMany({
       include: {
@@ -24,21 +26,21 @@ export const getAllBorrowings = async (req, res) => {
       data: borrowings,
     });
   } catch (error) {
-    logger.error({ error: error.message }, "Failed to retrieve borrowings");
+    logger.error({ error: (error as any).message }, "Failed to retrieve borrowings");
     res.status(500).json({
       success: false,
       message: "An error occurred while retrieving borrowings",
-      error: error.message,
+      error: (error as any).message,
     });
   }
 };
 
-export const getBorrowingById = async (req, res) => {
+export const getBorrowingById = async (req: Request, res: Response) => {
   try {
-    const id = parseInt(req.params.id);
+    const id = parseInt(req.params.id as string);
 
     const borrowing = await prisma.borrowings.findUnique({
-      where: { id: parseInt(id) },
+      where: { id },
       include: {
         borrower: { select: { id: true, name: true, email: true } },
         book: true,
@@ -59,22 +61,22 @@ export const getBorrowingById = async (req, res) => {
     });
   } catch (error) {
     logger.error(
-      { borrowingId: req.params.id, error: error.message },
+      { borrowingId: req.params.id, error: (error as any).message },
       "Failed to retrieve borrowing",
     );
     res.status(500).json({
       success: false,
       message: "An error occurred while retrieving borrowing",
-      error: error.message,
+      error: (error as any).message,
     });
   }
 };
 
 /**
- * @param {Express.Request} req
- * @param {Express.Response} res
+ * @param {Request} req
+ * @param {Response} res
  */
-export const createBorrowing = async (req, res) => {
+export const createBorrowing = async (req: Request, res: Response) => {
   try {
     const { userId, bookId } = req.body;
 
@@ -118,25 +120,25 @@ export const createBorrowing = async (req, res) => {
       data: borrowing,
     });
   } catch (error) {
-    logger.error({ error: error.message }, "Failed to create borrowing");
+    logger.error({ error: (error as any).message }, "Failed to create borrowing");
     res.status(500).json({
       success: false,
       message: "An error occurred while creating borrowing",
-      error: error.message,
+      error: (error as any).message,
     });
   }
 };
 
 /**
- * @param {Express.Request} req
- * @param {Express.Response} res
+ * @param {Request} req
+ * @param {Response} res
  */
-export const returnBook = async (req, res) => {
+export const returnBook = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
 
     const borrowing = await prisma.borrowings.findUnique({
-      where: { id: parseInt(id) },
+      where: { id: parseInt(id as string) },
     });
 
     if (!borrowing) {
@@ -154,7 +156,7 @@ export const returnBook = async (req, res) => {
     }
 
     const returnedBorrowing = await prisma.borrowings.update({
-      where: { id: parseInt(id) },
+      where: { id: parseInt(id as string) },
       data: { returned_at: new Date() },
       include: {
         borrower: { select: { id: true, name: true, email: true } },
@@ -174,27 +176,27 @@ export const returnBook = async (req, res) => {
     });
   } catch (error) {
     logger.error(
-      { borrowingId: req.params.id, error: error.message },
+      { borrowingId: req.params.id, error: (error as any).message },
       "Failed to update borrowing",
     );
     res.status(500).json({
       success: false,
       message: "An error occurred while updating borrowing",
-      error: error.message,
+      error: (error as any).message,
     });
   }
 };
 
 /**
- * @param {Express.Request} req
- * @param {Express.Response} res
+ * @param {Request} req
+ * @param {Response} res
  */
-export const deleteBorrowing = async (req, res) => {
+export const deleteBorrowing = async (req: Request, res: Response) => {
   try {
-    const id = parseInt(req.params.id);
+    const id = parseInt(req.params.id as string);
 
     const borrowing = await prisma.borrowings.findUnique({
-      where: { id: parseInt(id) },
+      where: { id },
       include: {
         borrower: { select: { id: true, name: true, email: true } },
         book: true,
@@ -208,7 +210,7 @@ export const deleteBorrowing = async (req, res) => {
       });
     }
 
-    await prisma.borrowings.delete({ where: { id: parseInt(id) } });
+    await prisma.borrowings.delete({ where: { id } });
 
     if (!borrowing.returned_at) {
       await prisma.books.update({
@@ -224,13 +226,13 @@ export const deleteBorrowing = async (req, res) => {
     });
   } catch (error) {
     logger.error(
-      { borrowingId: req.params.id, error: error.message },
+      { borrowingId: req.params.id, error: (error as any).message },
       "Failed to delete borrowing",
     );
     res.status(500).json({
       success: false,
       message: "An error occurred while deleting borrowing",
-      error: error.message,
+      error: (error as any).message,
     });
   }
 };

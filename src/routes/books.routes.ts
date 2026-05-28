@@ -17,7 +17,7 @@ import {
   updateBookValidation,
 } from "../validations/book.validations.js";
 
-import { authorizeAdmin } from "../middlewares/admin.middleware.js";
+import { authorizeAdmin } from "@/src/middlewares/admin.middleware.js";
 
 const router = Router();
 

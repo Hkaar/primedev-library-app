@@ -1,7 +1,8 @@
 import "dotenv/config";
 import jwt from "jsonwebtoken";
+import { Request, Response, NextFunction } from "express";
 
-export const authenticateToken = (req, res, next) => {
+export const authenticateToken = (req: Request, res: Response, next: NextFunction) => {
   // Mendapatkan token dari header Authorization
   const authHeader = req.headers["authorization"];
 
@@ -17,14 +18,14 @@ export const authenticateToken = (req, res, next) => {
   }
 
   // Memverifikasi token JWT menggunakan secret key dari environment variable
-  jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
+  jwt.verify(token, process.env.JWT_SECRET as string, (err, user) => {
     if (err) {
       return res.status(403).json({
         error: "Invalid access token",
       });
     }
 
-    req.user = user;
+    (req as any).user = user;
 
     next();
   });

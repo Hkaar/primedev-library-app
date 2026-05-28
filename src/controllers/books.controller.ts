@@ -1,20 +1,21 @@
-import prisma from "../../lib/database.js";
-import logger from "../../lib/logger.js";
+import prisma from "@/lib/database.js";
+import logger from "@/lib/logger.js";
+import { Request, Response, NextFunction } from "express";
 
 import { validationResult } from "express-validator";
 
 import { isCategoryExist } from "./categories.controller.js";
-import { checkValidation } from "../../helpers/validator.js";
+import { checkValidation } from "@/helpers/validator.js";
 
 import { getFileUrl, uploadFile, deleteFile } from "./cloudinary.controller.js";
 
 /**
  * Get all the books from the database
  *
- * @param {express.Request} req
- * @param {express.Response} res
+ * @param {Request} req
+ * @param {Response} res
  */
-export const getBooks = async (req, res) => {
+export const getBooks = async (req: Request, res: Response) => {
   try {
     const books = await prisma.books.findMany();
 
@@ -32,12 +33,12 @@ export const getBooks = async (req, res) => {
       data: books,
     });
   } catch (error) {
-    logger.error({ error: error.message }, "Failed to retrieve books");
+    logger.error({ error: (error as any).message }, "Failed to retrieve books");
 
     res.status(500).json({
       success: false,
       message: "An error occurred while retrieving books",
-      error: error.message,
+      error: (error as any).message,
     });
   }
 };
@@ -45,11 +46,11 @@ export const getBooks = async (req, res) => {
 /**
  * Get a specific book from the database
  *
- * @param {express.Request} req
- * @param {express.Response} res
+ * @param {Request} req
+ * @param {Response} res
  */
-export const getBookById = async (req, res) => {
-  const id = parseInt(req.params.id);
+export const getBookById = async (req: Request, res: Response) => {
+  const id = parseInt(req.params.id as string);
   const book = await prisma.books.findUnique({
     where: { id },
     include: { categories: true },
@@ -77,10 +78,10 @@ export const getBookById = async (req, res) => {
 /**
  * Create a book into the database
  *
- * @param {express.Request} req
- * @param {express.Response} res
+ * @param {Request} req
+ * @param {Response} res
  */
-export const createBook = async (req, res) => {
+export const createBook = async (req: Request, res: Response) => {
   try {
     if (!checkValidation(req, res)) return res;
 
@@ -95,7 +96,7 @@ export const createBook = async (req, res) => {
       });
     }
 
-    const cover = req.file;
+    const cover = (req as any).file;
     let cloudinaryId = null;
 
     if (cover) {
@@ -119,11 +120,11 @@ export const createBook = async (req, res) => {
       data: book,
     });
   } catch (error) {
-    logger.error({ error: error.message }, "Failed to create book");
+    logger.error({ error: (error as any).message }, "Failed to create book");
     res.status(500).json({
       success: false,
       message: "An error occurred while creating book",
-      error: error.message,
+      error: (error as any).message,
     });
   }
 };
@@ -131,14 +132,15 @@ export const createBook = async (req, res) => {
 /**
  * Update a stored book in the database
  *
- * @param {express.Request} req
- * @param {express.Response} res
+ * @param {Request} req
+ * @param {Response} res
+ * @param {NextFunction} next
  */
-export const updateBook = async (req, res, next) => {
+export const updateBook = async (req: Request, res: Response, next: NextFunction) => {
   try {
     if (!checkValidation(req, res)) return res;
 
-    const id = parseInt(req.params.id);
+    const id = parseInt(req.params.id as string);
     const { title, author, year, categoryId } = req.body;
 
     const existing = await prisma.books.findUnique({ where: { id } });
@@ -158,7 +160,7 @@ export const updateBook = async (req, res, next) => {
       }
     }
 
-    const cover = req.file;
+    const cover = (req as any).file;
     let cloudinaryId = existing.coverUrl;
 
     // Jika ada file cover yang diunggah, unggah ke Cloudinary dan dapatkan public_id-nya
@@ -193,13 +195,13 @@ export const updateBook = async (req, res, next) => {
     });
   } catch (error) {
     logger.error(
-      { bookId: req.params.id, error: error.message },
+      { bookId: req.params.id, error: (error as any).message },
       "Failed to update book",
     );
     res.status(500).json({
       success: false,
       message: "An error occurred while updating book",
-      error: error.message,
+      error: (error as any).message,
     });
   }
 };
@@ -207,12 +209,12 @@ export const updateBook = async (req, res, next) => {
 /**
  * Delete a stored book from the database
  *
- * @param {express.Request} req
- * @param {express.Response} res
+ * @param {Request} req
+ * @param {Response} res
  */
-export const deleteBook = async (req, res) => {
+export const deleteBook = async (req: Request, res: Response) => {
   try {
-    const id = parseInt(req.params.id);
+    const id = parseInt(req.params.id as string);
 
     const existing = await prisma.books.findUnique({ where: { id } });
     if (!existing) {
@@ -234,18 +236,18 @@ export const deleteBook = async (req, res) => {
     });
   } catch (error) {
     logger.error(
-      { bookId: req.params.id, error: error.message },
+      { bookId: req.params.id, error: (error as any).message },
       "Failed to delete book",
     );
     res.status(500).json({
       success: false,
       message: "An error occurred while deleting book",
-      error: error.message,
+      error: (error as any).message,
     });
   }
 };
 
-export const isBookExist = async (id) => {
+export const isBookExist = async (id: number) => {
   const book = await prisma.books.findUnique({
     where: {
       id: id,

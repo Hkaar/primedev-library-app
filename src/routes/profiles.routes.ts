@@ -7,7 +7,7 @@ import {
   updateProfile,
   deleteProfile,
 } from "../controllers/profiles.controller.js";
-import { authorizeAdmin } from "../middlewares/admin.middleware.js";
+import { authorizeAdmin } from "@/src/middlewares/admin.middleware.js";
 
 const router = Router();
 

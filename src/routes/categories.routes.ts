@@ -7,7 +7,7 @@ import {
   updateCategory,
   deleteCategory,
 } from "../controllers/categories.controller.js";
-import { authorizeAdmin } from "../middlewares/admin.middleware.js";
+import { authorizeAdmin } from "@/src/middlewares/admin.middleware.js";
 
 const router = Router();
 

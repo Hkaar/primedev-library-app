@@ -1,13 +1,14 @@
+import { Request, Response } from "express";
 import { validationResult } from "express-validator";
 
 /**
  * Checks the validation for a request
  *
- * @param {Express.Request} req
- * @param {Express.Response} res
+ * @param {Request} req
+ * @param {Response} res
  * @returns
  */
-export const checkValidation = (req, res) => {
+export const checkValidation = (req: Request, res: Response): boolean => {
   const validationErrors = validationResult(req);
 
   if (!validationErrors.isEmpty()) {

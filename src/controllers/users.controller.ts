@@ -1,8 +1,9 @@
-import prisma from "../../lib/database.js";
-import logger from "../../lib/logger.js";
-import { hashPassword } from "../../lib/hash.js";
+import prisma from "@/lib/database.js";
+import logger from "@/lib/logger.js";
+import { hashPassword } from "@/lib/hash.js";
+import { Request, Response } from "express";
 
-export const getUsers = async (req, res) => {
+export const getUsers = async (req: Request, res: Response) => {
   try {
     const users = await prisma.users.findMany();
     return res.json({
@@ -11,18 +12,18 @@ export const getUsers = async (req, res) => {
       data: users,
     });
   } catch (error) {
-    logger.error({ error: error.message }, "Failed to retrieve users");
+    logger.error({ error: (error as any).message }, "Failed to retrieve users");
     res.status(500).json({
       success: false,
       message: "An error occurred while retrieving users",
-      error: error.message,
+      error: (error as any).message,
     });
   }
 };
 
-export const getUserById = async (req, res) => {
+export const getUserById = async (req: Request, res: Response) => {
   try {
-    const id = parseInt(req.params.id);
+    const id = parseInt(req.params.id as string);
     const user = await prisma.users.findUnique({
       where: { id },
       include: { profiles: true },
@@ -41,18 +42,18 @@ export const getUserById = async (req, res) => {
     });
   } catch (error) {
     logger.error(
-      { userId: req.params.id, error: error.message },
+      { userId: req.params.id, error: (error as any).message },
       "Failed to retrieve user",
     );
     res.status(500).json({
       success: false,
       message: "An error occurred while retrieving user",
-      error: error.message,
+      error: (error as any).message,
     });
   }
 };
 
-export const createUser = async (req, res) => {
+export const createUser = async (req: Request, res: Response) => {
   try {
     const { name, email, password, role } = req.body;
 
@@ -68,18 +69,18 @@ export const createUser = async (req, res) => {
       data: user,
     });
   } catch (error) {
-    logger.error({ error: error.message }, "Failed to create user");
+    logger.error({ error: (error as any).message }, "Failed to create user");
     res.status(500).json({
       success: false,
       message: "An error occurred while creating user",
-      error: error.message,
+      error: (error as any).message,
     });
   }
 };
 
-export const updateUser = async (req, res) => {
+export const updateUser = async (req: Request, res: Response) => {
   try {
-    const id = parseInt(req.params.id);
+    const id = parseInt(req.params.id as string);
     const { name, email, password, role } = req.body;
 
     const existing = await prisma.users.findUnique({ where: { id } });
@@ -105,20 +106,20 @@ export const updateUser = async (req, res) => {
     });
   } catch (error) {
     logger.error(
-      { userId: req.params.id, error: error.message },
+      { userId: req.params.id, error: (error as any).message },
       "Failed to update user",
     );
     res.status(500).json({
       success: false,
       message: "An error occurred while updating user",
-      error: error.message,
+      error: (error as any).message,
     });
   }
 };
 
-export const deleteUser = async (req, res) => {
+export const deleteUser = async (req: Request, res: Response) => {
   try {
-    const id = parseInt(req.params.id);
+    const id = parseInt(req.params.id as string);
 
     const existing = await prisma.users.findUnique({ where: { id } });
     if (!existing) {
@@ -136,20 +137,20 @@ export const deleteUser = async (req, res) => {
     });
   } catch (error) {
     logger.error(
-      { userId: req.params.id, error: error.message },
+      { userId: req.params.id, error: (error as any).message },
       "Failed to delete user",
     );
     res.status(500).json({
       success: false,
       message: "An error occurred while deleting user",
-      error: error.message,
+      error: (error as any).message,
     });
   }
 };
 
-export const isUserExist = async (id) => {
+export const isUserExist = async (id: number) => {
   const user = await prisma.users.findUnique({
-    where: { id: parseInt(id) },
+    where: { id },
   });
   return !!user;
 };

@@ -7,7 +7,7 @@ import profileRouter from "./profiles.routes.js";
 import categoryRouter from "./categories.routes.js";
 import borrowingRouter from "./borrowings.routes.js";
 
-import { authenticateToken } from "../middlewares/auth.middleware.js";
+import { authenticateToken } from "@/src/middlewares/auth.middleware.js";
 
 const router = Router();
 

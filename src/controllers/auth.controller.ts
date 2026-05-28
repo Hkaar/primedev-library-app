@@ -1,14 +1,15 @@
 import bcrypt from "bcrypt";
 import "dotenv/config";
 import jwt from "jsonwebtoken";
-import prisma from "../../lib/database.js";
-import logger from "../../lib/logger.js";
+import prisma from "@/lib/database.js";
+import logger from "@/lib/logger.js";
+import { Request, Response } from "express";
 
 import { validationResult } from "express-validator";
-import { checkValidation } from "../../helpers/validator.js";
-import { comparePassword, hashPassword } from "../../lib/hash.js";
+import { checkValidation } from "@/helpers/validator.js";
+import { comparePassword, hashPassword } from "@/lib/hash.js";
 
-export const register = async (req, res) => {
+export const register = async (req: Request, res: Response) => {
   try {
     if (!checkValidation(req, res)) return res;
 
@@ -46,16 +47,16 @@ export const register = async (req, res) => {
       user,
     });
   } catch (error) {
-    logger.error({ error: error.message }, "Failed to register user");
+    logger.error({ error: (error as any).message }, "Failed to register user");
     res.status(500).json({
       success: false,
       message: "An error occurred during registration",
-      error: error.message,
+      error: (error as any).message,
     });
   }
 };
 
-export const login = async (req, res) => {
+export const login = async (req: Request, res: Response) => {
   try {
     if (!checkValidation(req, res)) return res;
 
@@ -78,10 +79,11 @@ export const login = async (req, res) => {
         email: user.email,
         role: user.role,
       },
-      process.env.JWT_SECRET,
+      process.env.JWT_SECRET as string,
       { expiresIn: "1h" },
     );
 
+    // @ts-ignore
     delete user.password;
 
     res.status(200).json({
@@ -91,11 +93,11 @@ export const login = async (req, res) => {
       token,
     });
   } catch (error) {
-    logger.error({ error: error.message }, "Failed to login user");
+    logger.error({ error: (error as any).message }, "Failed to login user");
     res.status(500).json({
       success: false,
       message: "An error occurred during login",
-      error: error.message,
+      error: (error as any).message,
     });
   }
 };

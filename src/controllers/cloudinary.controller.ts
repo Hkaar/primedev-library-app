@@ -1,12 +1,12 @@
-import cloudinary from "../../lib/cloudinary.js";
+import cloudinary from "@/lib/cloudinary.js";
 
-export const getFileUrl = (publicId) => {
+export const getFileUrl = (publicId: string) => {
   return cloudinary.v2.url(publicId);
 };
 
 export const uploadFile = async (
-  file,
-  options = {
+  file: any,
+  options: any = {
     folder: "library-api/book/covers",
   },
 ) => {
@@ -22,19 +22,19 @@ export const uploadFile = async (
 
     return result;
   } catch (error) {
-    console.error("Error uploading image:", error);
+    console.error("Error uploading image:", (error as any).message);
 
     throw new Error("Error uploading image");
   }
 };
 
-export const deleteFile = async (publicId) => {
+export const deleteFile = async (publicId: string) => {
   try {
     const result = await cloudinary.v2.uploader.destroy(publicId);
 
     return result;
   } catch (error) {
-    console.error("Error deleting image:", error);
+    console.error("Error deleting image:", (error as any).message);
 
     throw new Error("Error deleting image");
   }
