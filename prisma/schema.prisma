@@ -17,6 +17,7 @@ model Users {
 
   profiles   Profiles?
   borrowings Borrowings[]
+  reviews    Review[]
 }
 
 model Books {
@@ -24,13 +25,16 @@ model Books {
   categoryId   Int?
   title        String
   author       String
+  isbn         String?
+  totalCopies  Int      @default(1)
   year         Int
   available    Boolean  @default(true)
-  coverUrl String?
+  coverUrl     String?
   createdAt    DateTime @default(now())
 
   categories Categories?  @relation(fields: [categoryId], references: [id])
   borrowings Borrowings[]
+  reviews    Review[]
 }
 
 model Profiles {
@@ -38,26 +42,46 @@ model Profiles {
   userId    Int      @unique
   address   String?
   phone     String?
+  avatarUrl String?
+  avatarPublicId String?
   createdAt DateTime @default(now())
 
   user Users @relation(fields: [userId], references: [id])
 }
 
 model Categories {
-  id        Int      @id @default(autoincrement())
-  name      String
-  createdAt DateTime @default(now())
+  id               Int          @id @default(autoincrement())
+  name             String
+  parentCategoryId Int?
+  depth            Int          @default(0)
+  createdAt        DateTime     @default(now())
 
-  books Books[]
+  parent   Categories?  @relation("SubCategories", fields: [parentCategoryId], references: [id])
+  children Categories[] @relation("SubCategories")
+  books    Books[]
 }
 
 model Borrowings {
-  id          Int       @id @default(autoincrement())
-  userId      Int
-  bookId      Int
-  borrow_date DateTime  @default(now())
-  returned_at DateTime?
-  createdAt   DateTime  @default(now())
-  borrower    Users     @relation(fields: [userId], references: [id])
-  book        Books     @relation(fields: [bookId], references: [id])
+  id           Int       @id @default(autoincrement())
+  userId       Int
+  bookId       Int
+  borrow_date  DateTime  @default(now())
+  returned_at  DateTime?
+  dueDate      DateTime  @default(now())
+  reminderSent Boolean   @default(false)
+  createdAt    DateTime  @default(now())
+  borrower     Users     @relation(fields: [userId], references: [id])
+  book         Books     @relation(fields: [bookId], references: [id])
+}
+
+model Review {
+  id        String   @id @default(cuid())
+  rating    Int
+  comment   String
+  userId    Int
+  bookId    Int
+  createdAt DateTime @default(now())
+
+  user Users @relation(fields: [userId], references: [id])
+  book Books @relation(fields: [bookId], references: [id])
 }
