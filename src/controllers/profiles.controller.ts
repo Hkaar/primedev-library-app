@@ -181,7 +181,7 @@ export const uploadAvatar = async (req: Request, res: Response) => {
       return res.status(400).json({ success: false, message: "File too large (max 5MB)" });
     }
 
-    const profile = await prisma.profiles.findUnique({ where: { userId } });
+    const profile = await prisma.profiles.findUnique({ where: { userId: Number(userId) } });
     if (!profile) {
       return res.status(404).json({ success: false, message: "Profile not found" });
     }
