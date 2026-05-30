@@ -7,8 +7,8 @@ import {
   returnBook,
   deleteBorrowing,
   getUpcomingDue,
-} from "@/src/controllers/borrowings.controller.js";
-import { authorizeAdmin } from "@/src/middlewares/admin.middleware.js";
+} from "../controllers/borrowings.controller.js";
+import { authorizeAdmin } from "../middlewares/admin.middleware.js";
 
 const router = Router();
 

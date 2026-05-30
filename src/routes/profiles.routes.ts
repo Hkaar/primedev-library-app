@@ -8,7 +8,7 @@ import {
   updateProfile,
   deleteProfile,
   uploadAvatar,
-} from "@/src/controllers/profiles.controller.js";
+} from "../controllers/profiles.controller.js";
 import { authorizeAdmin } from "../middlewares/admin.middleware.js";
 import { authenticateToken } from "../middlewares/auth.middleware.js";
 

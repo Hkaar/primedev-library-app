@@ -8,8 +8,8 @@ import {
   deleteCategory,
   getCategoryTree,
   getSubCategories,
-} from "@/src/controllers/categories.controller.js";
-import { authorizeAdmin } from "@/src/middlewares/admin.middleware.js";
+} from "../controllers/categories.controller.js";
+import { authorizeAdmin } from "../middlewares/admin.middleware.js";
 
 const router = Router();
 

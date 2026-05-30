@@ -1,9 +1,9 @@
-import prisma from "@/lib/database.js";
-import logger from "@/lib/logger.js";
+import prisma from "../../lib/database.js";
+import logger from "../../lib/logger.js";
 import { Request, Response, NextFunction } from "express";
 
 import { isCategoryExist } from "./categories.controller.js";
-import { checkValidation } from "@/helpers/validator.js";
+import { checkValidation } from "../../helpers/validator.js";
 
 import { getFileUrl, uploadFile, deleteFile } from "./cloudinary.controller.js";
 

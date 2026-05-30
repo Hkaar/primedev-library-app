@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
-import prisma from "@/lib/database.js";
-import logger from "@/lib/logger.js";
-import { checkValidation } from "@/helpers/validator.js";
+import prisma from "../../lib/database.js";
+import logger from "../../lib/logger.js";
+import { checkValidation } from "../../helpers/validator.js";
 
 export const createReview = async (req: Request, res: Response) => {
   try {

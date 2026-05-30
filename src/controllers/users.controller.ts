@@ -1,6 +1,6 @@
-import prisma from "@/lib/database.js";
-import logger from "@/lib/logger.js";
-import { hashPassword } from "@/lib/hash.js";
+import prisma from "../../lib/database.js";
+import logger from "../../lib/logger.js";
+import { hashPassword } from "../../lib/hash.js";
 import { Request, Response } from "express";
 
 export const getUsers = async (req: Request, res: Response) => {

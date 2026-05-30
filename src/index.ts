@@ -1,7 +1,7 @@
 import express from "express";
 import { pinoHttp } from "pino-http";
 import router from "./routes/index.routes.js";
-import logger from "@/lib/logger.js";
+import logger from "../lib/logger.js";
 import { initReminderCron } from "./services/reminder.service.js";
 
 const app = express();

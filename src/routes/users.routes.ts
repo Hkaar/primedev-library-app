@@ -9,8 +9,8 @@ import {
   getBorrowingHistory,
   getBorrowingStats,
   getActivityDashboard,
-} from "@/src/controllers/users.controller.js";
-import { authorizeAdmin } from "@/src/middlewares/admin.middleware.js";
+} from "../controllers/users.controller.js";
+import { authorizeAdmin } from "../middlewares/admin.middleware.js";
 
 const router = Router();
 

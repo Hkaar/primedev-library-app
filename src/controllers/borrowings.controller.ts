@@ -1,5 +1,5 @@
-import prisma from "@/lib/database.js";
-import logger from "@/lib/logger.js";
+import prisma from "../../lib/database.js";
+import logger from "../../lib/logger.js";
 import { Request, Response } from "express";
 
 import { isUserExist } from "./users.controller.js";

@@ -1,6 +1,6 @@
 import cron from "node-cron";
-import prisma from "@/lib/database.js";
-import logger from "@/lib/logger.js";
+import prisma from "../../lib/database.js";
+import logger from "../../lib/logger.js";
 
 export const initReminderCron = () => {
   // Run every day at 00:00

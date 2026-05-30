@@ -8,16 +8,16 @@ import {
   createBook,
   updateBook,
   deleteBook,
-} from "@/src/controllers/books.controller.js";
+} from "../controllers/books.controller.js";
 
 const upload = multer({ storage: multer.memoryStorage() });
 
 import {
   createBookValidation,
   updateBookValidation,
-} from "@/src/validations/book.validations.js";
+} from "../validations/book.validations.js";
 
-import { authorizeAdmin } from "@/src/middlewares/admin.middleware.js";
+import { authorizeAdmin } from "../middlewares/admin.middleware.js";
 
 const router = Router();
 

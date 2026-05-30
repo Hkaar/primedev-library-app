@@ -6,11 +6,11 @@ import userRouter from "./users.routes.js";
 import profileRouter from "./profiles.routes.js";
 import categoryRouter from "./categories.routes.js";
 import borrowingRouter from "./borrowings.routes.js";
-import * as reviewController from "@/src/controllers/reviews.controller.js";
-import * as bookController from "@/src/controllers/books.controller.js";
-import { reviewValidation } from "@/src/validations/review.validations.js";
-import { filterBooksValidation } from "@/src/validations/book.validations.js";
-import { authenticateToken } from "@/src/middlewares/auth.middleware.js";
+import * as reviewController from "../controllers/reviews.controller.js";
+import * as bookController from "../controllers/books.controller.js";
+import { reviewValidation } from "../validations/review.validations.js";
+import { filterBooksValidation } from "../validations/book.validations.js";
+import { authenticateToken } from "../middlewares/auth.middleware.js";
 
 const router = Router();
 
