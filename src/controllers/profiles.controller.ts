@@ -2,6 +2,7 @@ import prisma from "../../lib/database.js";
 import logger from "../../lib/logger.js";
 import { Request, Response } from "express";
 import { uploadFile, deleteFile } from "./cloudinary.controller.js";
+import { checkValidation } from "../../helpers/validator.js";
 
 export const getProfiles = async (req: Request, res: Response) => {
   try {
@@ -53,6 +54,8 @@ export const getProfileById = async (req: Request, res: Response) => {
 
 export const createProfile = async (req: Request, res: Response) => {
   try {
+    if (!checkValidation(req, res)) return res;
+
     const { userId, address, phone } = req.body;
 
     const user = await prisma.users.findUnique({
@@ -86,6 +89,8 @@ export const createProfile = async (req: Request, res: Response) => {
 
 export const updateProfile = async (req: Request, res: Response) => {
   try {
+    if (!checkValidation(req, res)) return res;
+
     const id = parseInt(req.params.id as string);
     const { address, phone } = req.body;
 

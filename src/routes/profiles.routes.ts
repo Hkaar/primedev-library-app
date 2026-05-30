@@ -9,6 +9,10 @@ import {
   deleteProfile,
   uploadAvatar,
 } from "../controllers/profiles.controller.js";
+import {
+  createProfileValidation,
+  updateProfileValidation,
+} from "../validations/profile.validations.js";
 import { authorizeAdmin } from "../middlewares/admin.middleware.js";
 import { authenticateToken } from "../middlewares/auth.middleware.js";
 
@@ -20,11 +24,11 @@ router.get("/", getProfiles);
 
 router.get("/:id", getProfileById);
 
-router.post("/", createProfile);
+router.post("/", createProfileValidation, createProfile);
 
 router.post("/avatar", authenticateToken, upload.single("avatar"), uploadAvatar);
 
-router.put("/:id", updateProfile);
+router.put("/:id", updateProfileValidation, updateProfile);
 
 router.delete("/:id", authorizeAdmin, deleteProfile);
 

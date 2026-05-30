@@ -2,6 +2,7 @@ import prisma from "../../lib/database.js";
 import logger from "../../lib/logger.js";
 import { hashPassword } from "../../lib/hash.js";
 import { Request, Response } from "express";
+import { checkValidation } from "../../helpers/validator.js";
 
 export const getUsers = async (req: Request, res: Response) => {
   try {
@@ -55,6 +56,8 @@ export const getUserById = async (req: Request, res: Response) => {
 
 export const createUser = async (req: Request, res: Response) => {
   try {
+    if (!checkValidation(req, res)) return res;
+
     const { name, email, password, role } = req.body;
 
     const hashed = await hashPassword(password);
@@ -80,6 +83,8 @@ export const createUser = async (req: Request, res: Response) => {
 
 export const updateUser = async (req: Request, res: Response) => {
   try {
+    if (!checkValidation(req, res)) return res;
+
     const id = parseInt(req.params.id as string);
     const { name, email, password, role } = req.body;
 
@@ -90,11 +95,14 @@ export const updateUser = async (req: Request, res: Response) => {
         .json({ status: false, message: `User with ID: ${id} not found` });
     }
 
-    const hashed = await hashPassword(password);
+    const data: any = { name, email, role };
+    if (password) {
+      data.password = await hashPassword(password);
+    }
 
     await prisma.users.update({
       where: { id },
-      data: { name, email, password: hashed, role },
+      data,
     });
 
     const user = await prisma.users.findUnique({ where: { id } });

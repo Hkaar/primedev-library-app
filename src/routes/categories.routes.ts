@@ -9,6 +9,10 @@ import {
   getCategoryTree,
   getSubCategories,
 } from "../controllers/categories.controller.js";
+import {
+  createCategoryValidation,
+  updateCategoryValidation,
+} from "../validations/category.validations.js";
 import { authorizeAdmin } from "../middlewares/admin.middleware.js";
 
 const router = Router();
@@ -18,9 +22,9 @@ router.get("/tree", getCategoryTree);
 router.get("/:id", getCategoryById);
 router.get("/:id/subcategories", getSubCategories);
 
-router.post("/", authorizeAdmin, createCategory);
+router.post("/", authorizeAdmin, createCategoryValidation, createCategory);
 
-router.put("/:id", authorizeAdmin, updateCategory);
+router.put("/:id", authorizeAdmin, updateCategoryValidation, updateCategory);
 
 router.delete("/:id", authorizeAdmin, deleteCategory);
 

@@ -10,6 +10,10 @@ import {
   getBorrowingStats,
   getActivityDashboard,
 } from "../controllers/users.controller.js";
+import {
+  createUserValidation,
+  updateUserValidation,
+} from "../validations/user.validations.js";
 import { authorizeAdmin } from "../middlewares/admin.middleware.js";
 
 const router = Router();
@@ -21,9 +25,9 @@ router.get("/:id/borrowing-history", getBorrowingHistory);
 router.get("/:id/borrowing-stats", getBorrowingStats);
 router.get("/:id/activity-dashboard", getActivityDashboard);
 
-router.post("/", authorizeAdmin, createUser);
+router.post("/", authorizeAdmin, createUserValidation, createUser);
 
-router.put("/:id", authorizeAdmin, updateUser);
+router.put("/:id", authorizeAdmin, updateUserValidation, updateUser);
 
 router.delete("/:id", authorizeAdmin, deleteUser);
 

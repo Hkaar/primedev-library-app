@@ -1,6 +1,7 @@
 import prisma from "../../lib/database.js";
 import logger from "../../lib/logger.js";
 import { Request, Response } from "express";
+import { checkValidation } from "../../helpers/validator.js";
 
 import { isUserExist } from "./users.controller.js";
 import { isBookExist } from "./books.controller.js";

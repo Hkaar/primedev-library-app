@@ -2,6 +2,7 @@ import prisma from "../../lib/database.js";
 import logger from "../../lib/logger.js";
 import { Request, Response } from "express";
 import { getFileUrl } from "./cloudinary.controller.js";
+import { checkValidation } from "../../helpers/validator.js";
 
 let cache: { data: any; ts: number } | null = null;
 const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
@@ -132,6 +133,8 @@ export const createCategory = async (req: Request, res: Response) => {
 
 export const updateCategory = async (req: Request, res: Response) => {
   try {
+    if (!checkValidation(req, res)) return res;
+
     const id = parseInt(req.params.id as string);
     const { name, parentCategoryId } = req.body;
 
