@@ -89,12 +89,22 @@ export const createBorrowing = async (req: Request, res: Response) => {
       });
     }
 
-    const bookExists = await isBookExist(bookId);
+    const book = await prisma.books.findUnique({
+      where: { id: parseInt(bookId) },
+      include: { _count: { select: { borrowings: { where: { returned_at: null } } } } },
+    });
 
-    if (!bookExists) {
+    if (!book) {
       return res.status(404).json({
         success: false,
         message: `Book with ID: ${bookId} not found`,
+      });
+    }
+
+    if (book._count.borrowings >= book.totalCopies) {
+      return res.status(400).json({
+        success: false,
+        message: "No copies available for this book",
       });
     }
 
@@ -102,6 +112,7 @@ export const createBorrowing = async (req: Request, res: Response) => {
       data: {
         userId: parseInt(userId),
         bookId: parseInt(bookId),
+        dueDate: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000), // Default 14 days
       },
       include: {
         borrower: { select: { id: true, name: true, email: true } },
@@ -109,10 +120,13 @@ export const createBorrowing = async (req: Request, res: Response) => {
       },
     });
 
-    await prisma.books.update({
-      where: { id: parseInt(bookId) },
-      data: { available: false },
-    });
+    // If this was the last copy, set available to false
+    if (book._count.borrowings + 1 >= book.totalCopies) {
+      await prisma.books.update({
+        where: { id: parseInt(bookId) },
+        data: { available: false },
+      });
+    }
 
     res.json({
       success: true,
@@ -164,6 +178,7 @@ export const returnBook = async (req: Request, res: Response) => {
       },
     });
 
+    // Always set available to true when a book is returned
     await prisma.books.update({
       where: { id: returnedBorrowing.bookId },
       data: { available: true },

@@ -83,7 +83,7 @@ export const createBook = async (req: Request, res: Response) => {
   try {
     if (!checkValidation(req, res)) return res;
 
-    const { title, author, year, categoryId } = req.body;
+    const { title, author, year, categoryId, totalCopies, isbn } = req.body;
 
     const category = await isCategoryExist(parseInt(categoryId)); // fix
 
@@ -109,6 +109,8 @@ export const createBook = async (req: Request, res: Response) => {
         year: parseInt(year),
         categoryId: parseInt(categoryId),
         coverUrl: cloudinaryId,
+        totalCopies: totalCopies ? parseInt(totalCopies) : 1,
+        isbn: isbn || null,
       },
     });
 
@@ -139,7 +141,7 @@ export const updateBook = async (req: Request, res: Response, next: NextFunction
     if (!checkValidation(req, res)) return res;
 
     const id = parseInt(req.params.id as string);
-    const { title, author, year, categoryId } = req.body;
+    const { title, author, year, categoryId, totalCopies, isbn } = req.body;
 
     const existing = await prisma.books.findUnique({ where: { id } });
     if (!existing) {
@@ -178,9 +180,11 @@ export const updateBook = async (req: Request, res: Response, next: NextFunction
       data: {
         title,
         author,
-        year: parseInt(year),
-        categoryId: parseInt(categoryId),
+        year: year ? parseInt(year) : undefined,
+        categoryId: categoryId ? parseInt(categoryId) : undefined,
         coverUrl: cloudinaryId,
+        totalCopies: totalCopies ? parseInt(totalCopies) : undefined,
+        isbn: isbn !== undefined ? isbn : undefined,
       },
     });
 
