@@ -1,4 +1,4 @@
-import { body } from "express-validator";
+import { body, query } from "express-validator";
 
 export const createBookValidation = [
   body("title")
@@ -87,4 +87,17 @@ export const updateBookValidation = [
 
     return true;
   }),
+];
+
+export const filterBooksValidation = [
+  query("category").optional().isString(),
+  query("author").optional().isString(),
+  query("minYear").optional().isInt({ min: 0 }).toInt(),
+  query("maxYear").optional().isInt({ min: 0 }).toInt(),
+  query("minRating").optional().isFloat({ min: 0, max: 5 }).toFloat(),
+  query("available").optional().isBoolean().toBoolean(),
+  query("sortBy").optional().isIn(["title", "rating", "year", "popularity"]),
+  query("order").optional().isIn(["asc", "desc"]),
+  query("page").optional().isInt({ min: 1 }).toInt(),
+  query("limit").optional().isInt({ min: 1, max: 100 }).toInt(),
 ];
