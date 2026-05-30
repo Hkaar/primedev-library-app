@@ -6,7 +6,10 @@ import {
   createUser,
   updateUser,
   deleteUser,
-} from "../controllers/users.controller.js";
+  getBorrowingHistory,
+  getBorrowingStats,
+  getActivityDashboard,
+} from "@/src/controllers/users.controller.js";
 import { authorizeAdmin } from "@/src/middlewares/admin.middleware.js";
 
 const router = Router();
@@ -14,6 +17,9 @@ const router = Router();
 router.get("/", getUsers);
 
 router.get("/:id", getUserById);
+router.get("/:id/borrowing-history", getBorrowingHistory);
+router.get("/:id/borrowing-stats", getBorrowingStats);
+router.get("/:id/activity-dashboard", getActivityDashboard);
 
 router.post("/", authorizeAdmin, createUser);
 
