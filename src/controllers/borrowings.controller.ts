@@ -79,6 +79,8 @@ export const getBorrowingById = async (req: Request, res: Response) => {
  */
 export const createBorrowing = async (req: Request, res: Response) => {
   try {
+    if (!checkValidation(req, res)) return res;
+
     const { userId, bookId } = req.body;
 
     const userExists = await isUserExist(userId);

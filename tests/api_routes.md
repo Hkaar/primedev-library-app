@@ -46,12 +46,18 @@ curl -X GET https://primedev-library-app.vercel.app/books/:id/status \
 ### Create book (Admin only, handles cover upload)
 curl -X POST https://primedev-library-app.vercel.app/books \
      -H "Authorization: Bearer YOUR_TOKEN" \
-     -F "title=New Book" -F "author=Author" -F "year=2024" -F "categoryId=1" -F "cover=@/path/to/cover.jpg"
+     -F "title=New Book" \
+     -F "author=Author" \
+     -F "year=2024" \
+     -F "categoryId=1" \
+     -F "totalCopies=5" \
+     -F "isbn=978-3-16-148410-0" \
+     -F "cover=@/path/to/cover.jpg"
 
 ### Update book (Admin only)
 curl -X PUT https://primedev-library-app.vercel.app/books/:id \
      -H "Authorization: Bearer YOUR_TOKEN" \
-     -d '{"title": "Updated Title"}'
+     -d '{"title": "Updated Title", "totalCopies": 10}'
 
 ### Delete book (Admin only)
 curl -X DELETE https://primedev-library-app.vercel.app/books/:id \
@@ -85,7 +91,16 @@ curl -X GET https://primedev-library-app.vercel.app/users/:id/activity-dashboard
 ### Create User (Admin only)
 curl -X POST https://primedev-library-app.vercel.app/users \
      -H "Authorization: Bearer YOUR_TOKEN" \
-     -d '{"name": "User Name", "email": "user@test.com", "password": "password", "role": "USER"}'
+     -d '{"name": "User Name", "email": "user@test.com", "password": "password123", "role": "USER"}'
+
+### Update User (Admin only)
+curl -X PUT https://primedev-library-app.vercel.app/users/:id \
+     -H "Authorization: Bearer YOUR_TOKEN" \
+     -d '{"name": "Updated Name"}'
+
+### Delete User (Admin only)
+curl -X DELETE https://primedev-library-app.vercel.app/users/:id \
+     -H "Authorization: Bearer YOUR_TOKEN"
 
 ---
 
@@ -131,10 +146,33 @@ curl -X POST https://primedev-library-app.vercel.app/categories \
      -H "Authorization: Bearer YOUR_TOKEN" \
      -d '{"name": "History", "parentCategoryId": 1}'
 
+### Update Category (Admin only)
+curl -X PUT https://primedev-library-app.vercel.app/categories/:id \
+     -H "Authorization: Bearer YOUR_TOKEN" \
+     -d '{"name": "Updated History Name"}'
+
 ---
 
 ## 6. Profiles & Reviews
 Personalization and user feedback.
+
+### List Profiles (Admin only)
+curl -X GET https://primedev-library-app.vercel.app/profiles \
+     -H "Authorization: Bearer YOUR_TOKEN"
+
+### Get Profile by User ID
+curl -X GET https://primedev-library-app.vercel.app/profiles/:id \
+     -H "Authorization: Bearer YOUR_TOKEN"
+
+### Create Profile
+curl -X POST https://primedev-library-app.vercel.app/profiles \
+     -H "Authorization: Bearer YOUR_TOKEN" \
+     -d '{"userId": 1, "address": "123 Main St", "phone": "555-0199"}'
+
+### Update Profile
+curl -X PUT https://primedev-library-app.vercel.app/profiles/:id \
+     -H "Authorization: Bearer YOUR_TOKEN" \
+     -d '{"address": "456 Updated Ave"}'
 
 ### Upload Profile Avatar
 curl -X POST https://primedev-library-app.vercel.app/profiles/avatar \

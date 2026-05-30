@@ -95,6 +95,8 @@ export const getCategoryById = async (req: Request, res: Response) => {
 
 export const createCategory = async (req: Request, res: Response) => {
   try {
+    if (!checkValidation(req, res)) return res;
+
     const { name, parentCategoryId } = req.body;
     let depth = 0;
 
