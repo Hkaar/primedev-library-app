@@ -1,6 +1,7 @@
 import prisma from "@/lib/database.js";
 import logger from "@/lib/logger.js";
 import { Request, Response } from "express";
+import { uploadFile, deleteFile } from "./cloudinary.controller.js";
 
 export const getProfiles = async (req: Request, res: Response) => {
   try {
@@ -153,6 +154,57 @@ export const deleteProfile = async (req: Request, res: Response) => {
     res.status(500).json({
       success: false,
       message: "An error occurred while deleting profile",
+      error: (error as any).message,
+    });
+  }
+};
+
+export const uploadAvatar = async (req: Request, res: Response) => {
+  try {
+    const userId = (req as any).user.id;
+    const avatar = (req as any).file;
+
+    if (!avatar) {
+      return res.status(400).json({ success: false, message: "Avatar file is required" });
+    }
+
+    if (!avatar.mimetype.startsWith("image/")) {
+      return res.status(400).json({ success: false, message: "Invalid file type" });
+    }
+
+    if (avatar.size > 5 * 1024 * 1024) {
+      return res.status(400).json({ success: false, message: "File too large (max 5MB)" });
+    }
+
+    const profile = await prisma.profiles.findUnique({ where: { userId } });
+    if (!profile) {
+      return res.status(404).json({ success: false, message: "Profile not found" });
+    }
+
+    if (profile.avatarPublicId) {
+      await deleteFile(profile.avatarPublicId);
+    }
+
+    const result = await uploadFile(avatar, { folder: "library-api/profiles/avatars" });
+
+    const updatedProfile = await prisma.profiles.update({
+      where: { userId },
+      data: {
+        avatarUrl: result.secure_url,
+        avatarPublicId: result.public_id,
+      },
+    });
+
+    return res.json({
+      success: true,
+      message: "Avatar uploaded successfully",
+      data: updatedProfile,
+    });
+  } catch (error) {
+    logger.error({ error: (error as any).message }, "Failed to upload avatar");
+    res.status(500).json({
+      success: false,
+      message: "An error occurred while uploading avatar",
       error: (error as any).message,
     });
   }

@@ -1,0 +1,5 @@
+-- AlterTable
+ALTER TABLE "Books" ADD COLUMN     "totalCopies" INTEGER NOT NULL DEFAULT 1;
+
+-- AlterTable
+ALTER TABLE "Borrowings" ADD COLUMN     "dueDate" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP;

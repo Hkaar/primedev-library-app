@@ -3,7 +3,7 @@ import { Router } from "express";
 import {
   loginValidation,
   registerValidation,
-} from "../validations/auth.validations.js";
+} from "@/src/validations/auth.validations.js";
 import { login, register } from "@/src/controllers/auth.controller.js";
 
 const router = Router();

@@ -8,14 +8,14 @@ import {
   createBook,
   updateBook,
   deleteBook,
-} from "../controllers/books.controller.js";
+} from "@/src/controllers/books.controller.js";
 
 const upload = multer({ storage: multer.memoryStorage() });
 
 import {
   createBookValidation,
   updateBookValidation,
-} from "../validations/book.validations.js";
+} from "@/src/validations/book.validations.js";
 
 import { authorizeAdmin } from "@/src/middlewares/admin.middleware.js";
 

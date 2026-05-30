@@ -1,13 +1,10 @@
-import bcrypt from "bcrypt";
 import "dotenv/config";
 import jwt from "jsonwebtoken";
-import prisma from "@/lib/database.js";
-import logger from "@/lib/logger.js";
+import prisma from "../../lib/database.js";
+import logger from "../../lib/logger.js";
 import { Request, Response } from "express";
-
-import { validationResult } from "express-validator";
-import { checkValidation } from "@/helpers/validator.js";
-import { comparePassword, hashPassword } from "@/lib/hash.js";
+import { checkValidation } from "../../helpers/validator.js";
+import { comparePassword, hashPassword } from "../../lib/hash.js";
 
 export const register = async (req: Request, res: Response) => {
   try {
