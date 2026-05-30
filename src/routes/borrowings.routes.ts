@@ -6,12 +6,14 @@ import {
   createBorrowing,
   returnBook,
   deleteBorrowing,
-} from "../controllers/borrowings.controller.js";
+  getUpcomingDue,
+} from "@/src/controllers/borrowings.controller.js";
 import { authorizeAdmin } from "@/src/middlewares/admin.middleware.js";
 
 const router = Router();
 
 router.get("/", getAllBorrowings);
+router.get("/upcoming-due", authorizeAdmin, getUpcomingDue);
 router.get("/:id", getBorrowingById);
 router.post("/", authorizeAdmin, createBorrowing);
 router.put("/return/:id", authorizeAdmin, returnBook);

@@ -236,3 +236,38 @@ export const deleteBorrowing = async (req: Request, res: Response) => {
     });
   }
 };
+
+export const getUpcomingDue = async (req: Request, res: Response) => {
+  try {
+    const threeDaysFromNow = new Date();
+    threeDaysFromNow.setDate(threeDaysFromNow.getDate() + 3);
+
+    const borrowings = await prisma.borrowings.findMany({
+      where: {
+        returned_at: null,
+        dueDate: {
+          lte: threeDaysFromNow,
+          gte: new Date(),
+        },
+      },
+      include: {
+        borrower: { select: { id: true, name: true, email: true } },
+        book: { select: { id: true, title: true } },
+      },
+    });
+
+    return res.json({
+      success: true,
+      message: "Successfully fetched upcoming due borrowings",
+      data: borrowings,
+    });
+  } catch (error) {
+    logger.error({ error: (error as any).message }, "Failed to fetch upcoming due");
+    res.status(500).json({
+      success: false,
+      message: "An error occurred while fetching upcoming due",
+      error: (error as any).message,
+    });
+  }
+};
+
